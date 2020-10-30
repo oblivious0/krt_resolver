@@ -31,10 +31,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.marcus:baseModule:1.5.0-beta'
+    api 'com.marcus:baseModule:1.5.0-beta'
     api 'com.joooonho:selectableroundedimageview:1.0.1'
     api 'com.youth.banner:banner:2.0.12'
     api 'com.google.code.gson:gson:2.8.6'
