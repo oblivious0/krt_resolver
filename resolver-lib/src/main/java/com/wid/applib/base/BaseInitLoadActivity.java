@@ -52,8 +52,8 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
     protected List<File> files;
     protected AppInfoBean appInfoBean;
 
-    WeakHashMap<String, MPageInfoBean> md5CodeMap = new WeakHashMap<>();
-    WeakHashMap<String, MResourceBean> resMap = new WeakHashMap<>();
+    protected WeakHashMap<String, MPageInfoBean> md5CodeMap = new WeakHashMap<>();
+    protected WeakHashMap<String, MResourceBean> resMap = new WeakHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
