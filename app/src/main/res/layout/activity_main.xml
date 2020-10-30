@@ -1,18 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:drawableLeft="@mipmap/p01_03"
+            android:drawablePadding="15dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="扫描二维码获取项目信息"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+        
+        <androidx.cardview.widget.CardView
+            android:visibility="gone"
+            android:id="@+id/cardView"
+            app:contentPadding="15dp"
+            app:cardCornerRadius="7dp"
+            android:elevation="2dp"
+            android:layout_margin="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/krtCode"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:text="项目编号：123"
+                        android:textSize="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/krtVer"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:text="项目版本：123"
+                        android:textSize="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/button_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:text="点击开始加载模块化项目"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</RelativeLayout>

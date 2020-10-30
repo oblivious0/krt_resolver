@@ -37,6 +37,7 @@ import krt.wid.util.MPermissions;
 import krt.wid.util.ParseJsonUtil;
 
 import static com.wid.applib.MLib.COMPILER_VERSION;
+import static com.wid.applib.MLib.TERMINAL;
 import static com.wid.applib.MLib.TERMINAL_VERSION;
 
 
@@ -100,7 +101,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
 
         OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion"))
                 .params("tag", MProConfig.getInstance().getKrt_pro_code())
-                .params("terminalCode", 1)
+                .params("terminalCode", TERMINAL)
                 .params("terminalVersion", TERMINAL_VERSION)
                 .params("interpreterCode", COMPILER_VERSION)
                 .params("is_publish", MProConfig.getInstance().getIs_publish())

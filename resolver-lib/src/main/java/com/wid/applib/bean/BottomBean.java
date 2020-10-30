@@ -245,6 +245,16 @@ public class BottomBean {
             private boolean ifModulePage;
             private String url;
 
+            private List<String> terminal;
+
+            public List<String> getTerminal() {
+                return terminal;
+            }
+
+            public void setTerminal(List<String> terminal) {
+                this.terminal = terminal;
+            }
+
             public boolean isIfModulePage() {
                 return ifModulePage;
             }

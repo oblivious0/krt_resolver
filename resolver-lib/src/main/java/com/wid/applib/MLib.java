@@ -7,10 +7,17 @@ package com.wid.applib;
  */
 public class MLib {
 
+    public final static String TAG = "resolver";
+
+    /**
+     * 代表解析器为Android端
+     */
+    public final static String TERMINAL = "1";
+
     /**
      * 当前解析器版本
      */
-    public final static String COMPILER_VERSION = "2";
+    public final static String COMPILER_VERSION = "3";
     /**
      * 当前解析器端版本
      */

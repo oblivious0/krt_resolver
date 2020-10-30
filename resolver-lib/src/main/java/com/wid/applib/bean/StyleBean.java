@@ -79,6 +79,15 @@ public class StyleBean {
     private int slidingInterval;
     private String backImgUrl;
     private String backIconParam;
+    private String mode = "";
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
 
     public String getBackIconParam() {
         return backIconParam;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.wid.applib.MLib;
 import com.wid.applib.R;
 import com.wid.applib.base.BaseModuleFragment;
 import com.wid.applib.base.Constants;
@@ -56,7 +59,7 @@ public class BottomLayout extends LinearLayout {
 
     private BottomAdapter bottomAdapter;
 
-    private List<BottomBean.CommonBean.LinksBean> list;
+    private List<BottomBean.CommonBean.LinksBean> list, allList;
 
     private int selectPos;
 
@@ -96,13 +99,18 @@ public class BottomLayout extends LinearLayout {
      */
     private void init() {
         File resFile = new File(Constants.path + name);
-        if (!resFile.exists()) return;
+        if (!resFile.exists()) {
+            Log.w(MLib.TAG, "app底部菜单不存在");
+            return;
+        }
         String json = Util.getJson(resFile);
+        if (TextUtils.isEmpty(json)) {
+            Log.w(MLib.TAG, "app底部菜单配置有误");
+        }
         bottomBean = ParseJsonUtil.getBean(json, BottomBean.class);
-
         String skinPath = bottomBean.getCommon().getSkinName();
         skinName = skinPath.substring(skinPath.lastIndexOf("/"));
-        list = bottomBean.getCommon().getLinks();
+        allList = bottomBean.getCommon().getLinks();
         if (!TextUtils.isEmpty(bottomBean.getCommon().getSkinName())) {
             String[] names = bottomBean.getCommon().getSkinName().split("/");
             fileName = names[names.length - 1];
@@ -114,9 +122,6 @@ public class BottomLayout extends LinearLayout {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
-        LogUtils.e(Constants.path + skinName);
-
         CropUtil.getInstance().cropBottomImg(context, list, new File(Constants.path + skinName), () -> initIndicator());
         addViewPager();
         addIndicator();
@@ -127,17 +132,33 @@ public class BottomLayout extends LinearLayout {
      * 初始化fragment
      */
     private void initFragment() throws InstantiationException, IllegalAccessException {
+
+        /**
+         * 过滤一遍属于本端的菜单
+         */
+        list = new ArrayList<>();
+        for (int i = 0; i < allList.size(); i++) {
+            if (allList.get(i).getTerminal()==null){
+                list.add(allList.get(i));
+                continue;
+            }
+            if (allList.get(i).getTerminal().contains(MLib.TERMINAL)) {
+                list.add(allList.get(i));
+            }
+        }
+
+        /**
+         * 开始添加fragment
+         */
         if (fragments.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).isIfSelect()) selectPos = i;
                 Fragment fragment = null;
                 //源生界面
-                if (imp != null) {
-                    fragment = imp.instanceFragment(i, list.get(i).getUrl());
-                }
-
-                if (fragment == null) {
+                if (list.get(i).isIfModulePage()) {
                     fragment = clazz.newInstance().setJsonFile(list.get(i).getPageId());
+                } else {
+                    fragment = imp.instanceFragment(i, list.get(i).getUrl());
                 }
                 fragments.add(fragment);
             }

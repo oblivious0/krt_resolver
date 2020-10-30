@@ -68,6 +68,16 @@ public class EventBean {
     private String name;
     private String number;
 
+    private List<String> terminal;
+
+    public List<String> getTerminal() {
+        return terminal;
+    }
+
+    public void setTerminal(List<String> terminal) {
+        this.terminal = terminal;
+    }
+
     public String getNumber() {
         return number;
     }
@@ -213,7 +223,6 @@ public class EventBean {
     public void setNaviType(String naviType) {
         this.naviType = naviType;
     }
-
 
 
 }

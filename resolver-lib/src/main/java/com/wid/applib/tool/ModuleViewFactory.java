@@ -3,6 +3,7 @@ package com.wid.applib.tool;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.wid.applib.MLib;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bean.EventBean;
 import com.wid.applib.imp.ContextImp;
@@ -99,7 +100,17 @@ public class ModuleViewFactory {
                     if (obj != null) {
                         view.setClickable(false);
                         if (obj.size() != 0) {
-                            EventBindUtil.bindClick(view, contextImp.getOnClickTool(), obj);
+                            List<EventBean> events = new ArrayList<>();
+                            for (int z = 0; z < obj.size(); z++) {
+                                if (obj.get(z).getTerminal()==null){
+                                    events.add(obj.get(z));
+                                    continue;
+                                }
+                                if (obj.get(z).getTerminal().contains(MLib.TERMINAL)) {
+                                    events.add(obj.get(z));
+                                }
+                            }
+                            EventBindUtil.bindClick(view, contextImp.getOnClickTool(), events);
                         } else {
                             view.setClickable(false);
                         }

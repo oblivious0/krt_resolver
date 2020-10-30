@@ -1,5 +1,6 @@
 package com.wid.applib.view.module;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -42,6 +43,7 @@ public class PicWidget extends BaseWidget {
         super(context, object);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public View generate() {
         BaseLayoutBean bean = ParseJsonUtil.getBean(ParseJsonUtil.toJson(object), BaseLayoutBean.class);
@@ -53,7 +55,20 @@ public class PicWidget extends BaseWidget {
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
-        img.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        switch (bean.getStyle().getMode()) {
+            case "aspectFit":
+                img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                break;
+            case "aspectFill":
+                img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                break;
+            default:
+                //scaleToFill
+                img.setScaleType(ImageView.ScaleType.FIT_XY);
+                break;
+        }
+
         img.setLayoutParams(lp);
         int radius = Util.getRealValue(bean.getStyle().getBorderRadius()) / 2;
         img.setCornerRadiiDP(radius, radius, radius, radius);
@@ -81,19 +96,16 @@ public class PicWidget extends BaseWidget {
             MGlideUtil.load(getContext(), bean.getCommon().getSrc(), img);
         }
         img.setTag(R.id.cid, bean.getCid());
-        if(!bean.getCommon().isHidden()){
-            if(bean.getAnimation()!=null){
+        if (!bean.getCommon().isHidden()) {
+            if (bean.getAnimation() != null) {
                 Observable.timer(Math.round(bean.getAnimation().getDelay()) * 500, TimeUnit.MILLISECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Long>() {
-                            @Override
-                            public void accept(Long aLong) throws Exception {
-                                FlubberAnimate.animate(bean.getAnimation(), img);
-                                img.setVisibility(View.VISIBLE);
-                            }
+                        .subscribe(aLong -> {
+                            FlubberAnimate.animate(bean.getAnimation(), img);
+                            img.setVisibility(View.VISIBLE);
                         });
             }
-        }else{
+        } else {
             img.setVisibility(View.GONE);
         }
         return img;
