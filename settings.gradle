@@ -1,0 +1,3 @@
+rootProject.name='krt_resolver'
+include ':app'
+include ':resolver-lib'
