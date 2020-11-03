@@ -62,14 +62,14 @@ public class LayoutWidget extends BaseWidget {
         frameLayout.setLayoutParams(lp);
         frameLayout.setClipChildren(false);
 
-        if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
-            List<View> list = ModuleViewFactory.generate(bean.getChildren(), imp);
-            if (!list.isEmpty()) {
-                for (View view : list) {
-                    frameLayout.addView(view);
-                }
-            }
-        }
+//        if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
+//            List<View> list = ModuleViewFactory.generate(bean.getChildren(), imp);
+//            if (!list.isEmpty()) {
+//                for (View view : list) {
+//                    frameLayout.addView(view);
+//                }
+//            }
+//        }
 
         frameLayout.setTag(R.id.cid, bean.getCid());
         frameLayout.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);

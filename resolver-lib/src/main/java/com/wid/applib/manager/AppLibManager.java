@@ -18,6 +18,7 @@ import com.wid.applib.imp.ContextImp;
 import com.wid.applib.tool.ModuleViewFactory;
 import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.SpUtil;
+import com.wid.applib.view.widget.BaseView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,12 +125,15 @@ public class AppLibManager {
         if (nav == null || nav.isEmpty()) {
             Log.i(TAG, "The unresolved header[node] json !");
         } else {
-            List<View> navViews = ModuleViewFactory.generate(nav, moduleUI);
-            if (!navViews.isEmpty()) {
-                for (View view : navViews) {
-                    headerView.addView(view);
-                }
-            }
+            List<BaseView> views = new ArrayList<>();
+            ModuleViewFactory.createViews(nav, moduleUI, headerView, views, true);
+
+//            List<View> navViews = ModuleViewFactory.generate(nav, moduleUI);
+//            if (!navViews.isEmpty()) {
+//                for (View view : navViews) {
+//                    headerView.addView(view);
+//                }
+//            }
         }
 
         FrameLayout contentView = moduleUI.getContentView();
@@ -138,13 +142,16 @@ public class AppLibManager {
             Log.i(TAG, "The unresolved body[node] json !");
             return;
         }
+//
+//        List<View> viewList = ModuleViewFactory.generate(list, moduleUI);
+//        if (!viewList.isEmpty()) {
+//            for (View view : viewList) {
+//                contentView.addView(view);
+//            }
+//        }
 
-        List<View> viewList = ModuleViewFactory.generate(list, moduleUI);
-        if (!viewList.isEmpty()) {
-            for (View view : viewList) {
-                contentView.addView(view);
-            }
-        }
+        List<BaseView> views = new ArrayList<>();
+        ModuleViewFactory.createViews(nav, moduleUI, contentView, views, true);
 
         String broadcastJson = ParseJsonUtil.getStringByKey(json, JsonValue.BROADCAST);
         if (!TextUtils.isEmpty(broadcastJson)) {

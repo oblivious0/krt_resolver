@@ -1,9 +1,7 @@
-package com.wid.applib.view.module;
+package com.wid.applib.view.widget;
 
 import android.app.Activity;
-import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -11,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lzy.okgo.model.Response;
-import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.imp.ContextImp;
@@ -19,6 +16,7 @@ import com.wid.applib.util.AjaxUtil;
 import com.wid.applib.util.BindDataUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.view.module.BannerWidget;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerAdapter;
 import com.youth.banner.config.IndicatorConfig;
@@ -36,41 +34,40 @@ import krt.wid.util.MConstants;
 import krt.wid.util.ParseJsonUtil;
 
 /**
- * @author hyj
- * @time 2020/7/3 17:40
- * @class describe
+ * author: MaGua
+ * create on:2020/11/3 14:48
+ * description
  */
-public class BannerWidget extends BaseWidget {
+public class BannerView extends BaseView<Banner> {
 
-    private BaseLayoutBean bean;
     private List<Object> list = new ArrayList<>();
+    private ImageAdapter adapter;
 
-    public BannerWidget(ContextImp context, Object object) {
-        super(context, object);
+    public BannerView(ContextImp imp, BaseLayoutBean obj) {
+        super(imp, obj);
     }
 
-    public BannerWidget(Context context, Object object) {
-        super(context, object);
+    public BannerView(ContextImp imp, BaseLayoutBean obj, boolean isListChild) {
+        super(imp, obj, isListChild);
     }
 
     @Override
-    public View generate() {
+    protected boolean bindInNewThread() {
 
-        bean = ParseJsonUtil.getBean(ParseJsonUtil.toJson(object), BaseLayoutBean.class);
         list = BindDataUtil.getDatas(bean);
-        Banner banner = new Banner(getContext());
+        view = new Banner(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
                 .setHeight(bean.getCommon().getHeight())
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
-        banner.setLayoutParams(lp);
+        view.setLayoutParams(lp);
 
-        final ImageAdapter adapter = new ImageAdapter();
+        adapter = new ImageAdapter();
 
-        CircleIndicator circleIndicator = new CircleIndicator(getContext());
-        banner.setAdapter(adapter)
+        CircleIndicator circleIndicator = new CircleIndicator(contextImp.getContext());
+        view.setAdapter(adapter)
                 .setDelayTime(bean.getStyle().getSlidingInterval() * 1000)
                 .setIndicator(circleIndicator, bean.getStyle().isIndicatorShow())
                 .setIndicatorGravity(getIndicatorGravity(bean.getStyle().getIndicatorsAlignment()))
@@ -80,10 +77,17 @@ public class BannerWidget extends BaseWidget {
                         bean.getStyle().getIndicatorWidth() * 2)
                 .start();
 
+
+
+        return true;
+    }
+
+    @Override
+    protected void bindInMainThread() {
         if (list == null) {
 //            if (bean.getAjax().equals(""))
 
-            MCallBack callBack = new MCallBack<Result>((Activity) getContext(), false) {
+            MCallBack callBack = new MCallBack<Result>((Activity) contextImp.getContext(), false) {
                 @Override
                 public void onSuccess(Response<Result> response) {
                     if (response.body().code == 200) {
@@ -108,21 +112,22 @@ public class BannerWidget extends BaseWidget {
             };
 
             if (!TextUtils.isEmpty(bean.getAjax().get(0).getCid())) {
-                imp.getContainer("callback").put(bean.getAjax().get(0).getCid(), callBack);
-                imp.getContainer("ajax").put(bean.getAjax().get(0).getCid(), bean.getAjax().get(0));
+                contextImp.getContainer("callback").put(bean.getAjax().get(0).getCid(), callBack);
+                contextImp.getContainer("ajax").put(bean.getAjax().get(0).getCid(), bean.getAjax().get(0));
             }
 
             try {
-                AjaxUtil.assembleRequest(bean.getAjax().get(0), imp)
+                AjaxUtil.assembleRequest(bean.getAjax().get(0), contextImp)
                         .execute(callBack);
             }catch (Exception e){
 
             }
         }
+    }
 
-        banner.setTag(R.id.cid, bean.getCid());
+    @Override
+    public void bindData(String key, String val) {
 
-        return banner;
     }
 
     private int getIndicatorGravity(@NonNull String gravity) {
@@ -162,7 +167,7 @@ public class BannerWidget extends BaseWidget {
         public void onBindView(BannerViewHolder holder, Object data, int position, int size) {
             FrameLayout frameLayout = (FrameLayout) holder.itemView;
             frameLayout.removeAllViews();
-            BindDataUtil.bindListDatas(bean, imp, frameLayout, data);
+            BindDataUtil.bindListDatas(bean, contextImp, frameLayout, data);
 
         }
 
