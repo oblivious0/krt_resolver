@@ -18,6 +18,7 @@ import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.tool.PropertyBindTool;
+import com.wid.applib.view.widget.BaseView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -107,13 +108,15 @@ public class AjaxUtil {
                                 String[] str1 = str[str.length - 2].split("%krt%");
                                 String type = str1[0];
                                 String cid = str1[1];
-
                                 String[] bindK = bindDataBean.getBindKey().split("%krt_");
                                 if (bindK[0].equals("data")) {
 
-                                    PropertyBindTool.bindData(contextImp.getContext(),
-                                            (View) contextImp.getContainer("view").get(cid),
-                                            type, ParseJsonUtil.getStringByKey(data, bindK[1]), pro);
+//                                    ((BaseView) contextImp.getContainer("view").get(cid))
+//                                            .bindData(pro, ParseJsonUtil.getStringByKey(data, bindK[1]));
+
+//                                    PropertyBindTool.bindData(contextImp.getContext(),
+//                                            (View) contextImp.getContainer("view").get(cid),
+//                                            type, ParseJsonUtil.getStringByKey(data, bindK[1]), pro);
                                 }
                             }
                         }

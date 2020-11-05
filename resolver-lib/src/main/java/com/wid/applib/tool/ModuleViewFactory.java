@@ -41,56 +41,55 @@ public class ModuleViewFactory {
                                    ViewGroup vg, List<BaseView> views, boolean isChild) {
         Collections.sort(list, (o1, o2) -> o1.getCommon().getzIndex() - o2.getCommon().getzIndex());
 
-        Observable.fromIterable(list)
-                .subscribe(bean -> {
-                    String type = ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(bean), JsonValue.TYPE);
-                    if (TextUtils.isEmpty(type)) {
-                        return;
+        for (BaseLayoutBean bean: list) {
+            String type = ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(bean), JsonValue.TYPE);
+            if (TextUtils.isEmpty(type)) {
+                return;
+            }
+            BaseView baseView = null;
+            switch (type) {
+                case ViewValue.LISTMENUS:
+                    baseView = new ListMenuView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.LAYOUT:
+                    baseView = new LayoutView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.PIC:
+                    baseView = new PicView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.LABEL:
+                    baseView = new LabelView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.LIST:
+                    baseView = new ListDataView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.BUTTON:
+                    baseView = new ButtonView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.NAVBAR:
+                    baseView = new NavbarView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.BANNER:
+                    baseView = new BannerView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.TABTITLE:
+                    baseView = new TabTitleView(contextImp, bean, isChild);
+                    break;
+                default:
+                    if (contextImp.getConvertTool() != null) {
+                        baseView = contextImp.getConvertTool().convert(type, bean, isChild);
                     }
-                    BaseView baseView = null;
-                    switch (type) {
-                        case ViewValue.LISTMENUS:
-                            baseView = new ListMenuView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.LAYOUT:
-                            baseView = new LayoutView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.PIC:
-                            baseView = new PicView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.LABEL:
-                            baseView = new LabelView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.LIST:
-                            baseView = new ListDataView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.BUTTON:
-                            baseView = new ButtonView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.NAVBAR:
-                            baseView = new NavbarView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.BANNER:
-                            baseView = new BannerView(contextImp, bean, isChild);
-                            break;
-                        case ViewValue.TABTITLE:
-                            baseView = new TabTitleView(contextImp, bean, isChild);
-                            break;
-                        default:
-                            if (contextImp.getConvertTool() != null) {
-                                baseView = contextImp.getConvertTool().convert(type, bean, isChild);
-                            }
-                            if (baseView == null) {
-                                baseView = new DefaultView(contextImp, bean, isChild);
-                            }
-                            break;
+                    if (baseView == null) {
+                        baseView = new DefaultView(contextImp, bean, isChild);
                     }
-                    if (!isChild) {
-                        contextImp.getContainer("view").put(baseView.cid, baseView);
-                    }
-                    vg.addView(baseView.view);
-                    views.add(baseView);
-                });
+                    break;
+            }
+            if (!isChild) {
+                contextImp.getContainer("view").put(baseView.cid, baseView);
+            }
+            vg.addView(baseView.view);
+            views.add(baseView);
+        }
 
     }
 
