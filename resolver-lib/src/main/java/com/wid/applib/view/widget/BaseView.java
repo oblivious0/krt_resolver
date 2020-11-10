@@ -31,6 +31,7 @@ public abstract class BaseView<T extends View> {
     public T view;
     public boolean isListChild = false;
     public ContextImp contextImp;
+    public String type;
 
     protected BaseLayoutBean bean;
 
@@ -49,21 +50,23 @@ public abstract class BaseView<T extends View> {
 
     @SuppressLint("CheckResult")
     private void generate() {
+        cid = bean.getCid();
+        initView();
         Observable.just(bean)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .filter(baseLayoutBean -> {
-                    cid = bean.getCid();
-                    bindEvent();
-
                     return bindInNewThread();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(baseLayoutBean -> {
                     bindInMainThread();
+                    bindEvent();
                 });
 
     }
+
+    protected abstract void initView();
 
     protected abstract boolean bindInNewThread();
 

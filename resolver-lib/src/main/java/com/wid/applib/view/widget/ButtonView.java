@@ -30,8 +30,8 @@ public class ButtonView extends BaseView<FrameLayout> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
-
+    protected void initView() {
+        type = "button";
         view = new FrameLayout(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
@@ -40,6 +40,12 @@ public class ButtonView extends BaseView<FrameLayout> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+
+
         GradientDrawable drawable = Util.getBgDrawable(ColorUtil.rgba2HexString(bean.getStyle().getBgColor()), GradientDrawable.RECTANGLE
                 , bean.getStyle().getBorderRadius(), bean.getStyle().getBorderWidth(), ColorUtil.rgba2HexString(bean.getStyle().getBorderColor()));
         view.setBackgroundDrawable(drawable);

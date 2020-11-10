@@ -41,7 +41,8 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "img";
         view = new SelectableRoundedImageView(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
@@ -50,6 +51,19 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
 
+        view.setLayoutParams(lp);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+        int radius = Util.getRealValue(bean.getStyle().getBorderRadius()) / 2;
+        view.setCornerRadiiDP(radius, radius, radius, radius);
+        return true;
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    protected void bindInMainThread() {
         switch (bean.getStyle().getMode()) {
             case "aspectFit":
                 view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -62,16 +76,6 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                 view.setScaleType(ImageView.ScaleType.FIT_XY);
                 break;
         }
-
-        view.setLayoutParams(lp);
-        int radius = Util.getRealValue(bean.getStyle().getBorderRadius()) / 2;
-        view.setCornerRadiiDP(radius, radius, radius, radius);
-        return true;
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    protected void bindInMainThread() {
         if (bean.getStyle().isIcon()) {
             if (!TextUtils.isEmpty(bean.getStyle().getIconFileName())) {
                 String[] urls = bean.getStyle().getIconFileName().split("/");

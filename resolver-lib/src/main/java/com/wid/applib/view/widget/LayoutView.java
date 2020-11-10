@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class LayoutView extends BaseView<FrameLayout> {
 
+    public List<BaseView> childViews = new ArrayList<>();
+
     public LayoutView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
     }
@@ -34,7 +36,8 @@ public class LayoutView extends BaseView<FrameLayout> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "layout";
         if (bean.getCommon() != null && Util.getRealColor(bean.getCommon().getShadowColor()) != 0
                 && Util.getRealColor(bean.getCommon().getShadowColor()) != -1) {
             view = new CardView(contextImp.getContext());
@@ -58,16 +61,19 @@ public class LayoutView extends BaseView<FrameLayout> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
         view.setClipChildren(false);
-        view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
         return true;
     }
 
     @Override
     protected void bindInMainThread() {
+        view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
         if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
-            List<BaseView> views = new ArrayList<>();
-            ModuleViewFactory.createViews(bean.getChildren(), contextImp, view, views, isListChild);
+            ModuleViewFactory.createViews(bean.getChildren(), contextImp, view, childViews, isListChild);
         }
     }
 

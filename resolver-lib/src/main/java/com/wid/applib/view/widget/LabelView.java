@@ -33,7 +33,8 @@ public class LabelView extends BaseView<TextView> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "text";
         view = new TextView(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
@@ -41,6 +42,31 @@ public class LabelView extends BaseView<TextView> {
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
+
+        view.setLayoutParams(lp);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            view.setLineHeight(Util.getRealValue(
+                    bean.getStyle().getLineHeight()));
+        }
+        if (bean.getStyle().getLineBreakLines() != 0) {
+            view.setMaxLines(bean.getStyle().getLineBreakLines());
+        }
+        if (bean.getStyle().isLineBreakMode()) {
+            view.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
+        }
+
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+
+
+        return true;
+    }
+
+    @Override
+    protected void bindInMainThread() {
+
         view.setText(bean.getCommon().getText().trim());
         if (bean.getStyle().getColor().contains("#")) {
             view.setTextColor(Color.parseColor(bean.getStyle().getColor()));
@@ -71,25 +97,7 @@ public class LabelView extends BaseView<TextView> {
                 GradientDrawable.RECTANGLE, bean.getStyle().getBorderRadius(), bean.getStyle().getBorderWidth(),
                 bean.getStyle().getBorderColor());
         view.setBackgroundDrawable(drawable);
-        view.setLayoutParams(lp);
-        view.setTag(bean.getCid());
         view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            view.setLineHeight(Util.getRealValue(
-                    bean.getStyle().getLineHeight()));
-        }
-        if (bean.getStyle().getLineBreakLines() != 0) {
-            view.setMaxLines(bean.getStyle().getLineBreakLines());
-        }
-        if (bean.getStyle().isLineBreakMode()) {
-            view.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
-        }
-        return true;
-    }
-
-    @Override
-    protected void bindInMainThread() {
-
     }
 
     @Override

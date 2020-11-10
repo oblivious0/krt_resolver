@@ -161,7 +161,6 @@ public class BannerWidget extends BaseWidget {
         @Override
         public void onBindView(BannerViewHolder holder, Object data, int position, int size) {
             FrameLayout frameLayout = (FrameLayout) holder.itemView;
-            frameLayout.removeAllViews();
             BindDataUtil.bindListDatas(bean, imp, frameLayout, data);
 
         }

@@ -28,7 +28,8 @@ public class NavbarView extends BaseView<MTitle> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "nav";
         view = new NavBar.Builder(contextImp.getContext(), bean.getCommon().getHeight())
                 .setBackColor(bean.getStyle().getBgColor())
                 .setCenterText(bean.getCommon().getTitle(), Util.getRealColor(bean.getStyle().getTitleColor()), Util.getRealValue(bean.getStyle().getTitleFontSize()))
@@ -40,6 +41,11 @@ public class NavbarView extends BaseView<MTitle> {
                 .setHeight(100)
                 .build();
         view.setLayoutParams(lp);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+
         return true;
     }
 

@@ -170,9 +170,6 @@ public class ListWidget extends BaseWidget {
             if (bean.getCid().equals("1090m4mk5xl")) {
 //                LogUtils.e(list);
             }
-            if (frameLayout.getChildCount() != 0) {
-                frameLayout.removeAllViews();
-            }
             BindDataUtil.bindListDatas(bean, imp, frameLayout, item);
         }
     }

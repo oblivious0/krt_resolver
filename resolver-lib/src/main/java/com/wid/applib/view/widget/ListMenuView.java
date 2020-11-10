@@ -27,7 +27,8 @@ public class ListMenuView extends BaseView<RecyclerView> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "listMenu";
         view = new RecyclerView(contextImp.getContext());
         GridLayoutManager manager = new GridLayoutManager(contextImp.getContext(), bean.getCommon().getNum());
         view.setLayoutManager(manager);
@@ -37,8 +38,11 @@ public class ListMenuView extends BaseView<RecyclerView> {
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
-        view.setTag(bean.getCid());
         view.setLayoutParams(lp);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
         view.setAdapter(new AdapterUtil.ListMenusAdapter(bean.getCommon().getList()));
         view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
         return true;

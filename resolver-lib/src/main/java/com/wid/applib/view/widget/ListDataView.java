@@ -51,9 +51,9 @@ public class ListDataView extends BaseView<MRecyclerView> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "list";
         list = BindDataUtil.getDatas(bean);
-
         view = new MRecyclerView(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
 //                .setWidth(bean.getCommon().getWidth())
@@ -64,6 +64,11 @@ public class ListDataView extends BaseView<MRecyclerView> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+
         //判断是横向还是纵向滑动
         RecyclerView.LayoutManager lm = null;
 
@@ -173,9 +178,6 @@ public class ListDataView extends BaseView<MRecyclerView> {
                     GradientDrawable.RECTANGLE, bean.getStyle().getBorderRadius(), bean.getStyle().getBorderWidth(),
                     bean.getStyle().getBorderColor());
             frameLayout.setBackgroundDrawable(drawable);
-            if (frameLayout.getChildCount() != 0) {
-                frameLayout.removeAllViews();
-            }
             BindDataUtil.bindListDatas(bean, contextImp, frameLayout, item);
         }
     }

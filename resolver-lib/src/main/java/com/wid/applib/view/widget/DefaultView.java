@@ -28,7 +28,8 @@ public class DefaultView extends BaseView<FrameLayout> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "nullView";
         view = new FrameLayout(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
@@ -36,9 +37,10 @@ public class DefaultView extends BaseView<FrameLayout> {
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
+        view.setLayoutParams(lp);
+
         GradientDrawable drawable = Util.getBgDrawable("#ffffff", GradientDrawable.RECTANGLE, 0, 4, "#000000");
         view.setBackgroundDrawable(drawable);
-        view.setLayoutParams(lp);
         TextView textView = new TextView(contextImp.getContext());
         textView.setText(bean.getType());
         textView.setTextColor(Color.BLACK);
@@ -46,6 +48,12 @@ public class DefaultView extends BaseView<FrameLayout> {
         tv.gravity = Gravity.CENTER;
         textView.setLayoutParams(tv);
         view.addView(textView);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+
+
         return true;
     }
 

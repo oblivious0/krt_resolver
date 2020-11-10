@@ -40,7 +40,7 @@ import krt.wid.util.ParseJsonUtil;
  */
 public class BannerView extends BaseView<Banner> {
 
-    private List<Object> list = new ArrayList<>();
+    private List<Object> list;
     private ImageAdapter adapter;
 
     public BannerView(ContextImp imp, BaseLayoutBean obj) {
@@ -52,8 +52,8 @@ public class BannerView extends BaseView<Banner> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
-
+    protected void initView() {
+        type = "banner";
         list = BindDataUtil.getDatas(bean);
         view = new Banner(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
@@ -63,7 +63,10 @@ public class BannerView extends BaseView<Banner> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
+    }
 
+    @Override
+    protected boolean bindInNewThread() {
         adapter = new ImageAdapter();
 
         CircleIndicator circleIndicator = new CircleIndicator(contextImp.getContext());
@@ -78,15 +81,12 @@ public class BannerView extends BaseView<Banner> {
                 .start();
 
 
-
         return true;
     }
 
     @Override
     protected void bindInMainThread() {
         if (list == null) {
-//            if (bean.getAjax().equals(""))
-
             MCallBack callBack = new MCallBack<Result>((Activity) contextImp.getContext(), false) {
                 @Override
                 public void onSuccess(Response<Result> response) {
@@ -102,8 +102,8 @@ public class BannerView extends BaseView<Banner> {
                 public Result convertResponse(okhttp3.Response response) throws Throwable {
                     MJsonConvert<Result> convert = new MJsonConvert<>(Result.class);
                     Result result = convert.convertResponse(response);
-                    if (result!=null){
-                        if (!result.isSuccess()){
+                    if (result != null) {
+                        if (!result.isSuccess()) {
                             EventBus.getDefault().post(new MEventBean(MConstants.ACTION_RESULT_CODE, result.code));
                         }
                     }
@@ -119,7 +119,7 @@ public class BannerView extends BaseView<Banner> {
             try {
                 AjaxUtil.assembleRequest(bean.getAjax().get(0), contextImp)
                         .execute(callBack);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -166,7 +166,6 @@ public class BannerView extends BaseView<Banner> {
         @Override
         public void onBindView(BannerViewHolder holder, Object data, int position, int size) {
             FrameLayout frameLayout = (FrameLayout) holder.itemView;
-            frameLayout.removeAllViews();
             BindDataUtil.bindListDatas(bean, contextImp, frameLayout, data);
 
         }

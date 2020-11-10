@@ -45,7 +45,9 @@ import java.util.List;
  */
 public class TabTitleView extends BaseView<LinearLayout> {
 
-    private List<String> mTitles = new ArrayList<>();
+    private List<String> mTitles;
+    private MagicIndicator magicIndicator;
+    private SViewPager viewPager;
 
     public TabTitleView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
@@ -56,23 +58,29 @@ public class TabTitleView extends BaseView<LinearLayout> {
     }
 
     @Override
-    protected boolean bindInNewThread() {
+    protected void initView() {
+        type = "tab";
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
                 .setHeight(bean.getCommon().getHeight())
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
-        LinearLayout linearLayout = new LinearLayout(contextImp.getContext());
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setLayoutParams(lp);
+        view = new LinearLayout(contextImp.getContext());
+        view.setOrientation(LinearLayout.VERTICAL);
+        view.setLayoutParams(lp);
         LinearLayout.LayoutParams indicatorlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, Util.getRealValue(bean.getStyle().getTabHeight()));
-        MagicIndicator magicIndicator = new MagicIndicator(contextImp.getContext());
+        magicIndicator = new MagicIndicator(contextImp.getContext());
         magicIndicator.setLayoutParams(indicatorlp);
-        linearLayout.addView(magicIndicator);
+        viewPager = new SViewPager(contextImp.getContext());
         LinearLayout.LayoutParams viewpagerlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final SViewPager viewPager = new SViewPager(contextImp.getContext());
+        viewPager.setCanScroll(false);
+        viewPager.setId(View.generateViewId());
+        viewPager.setOffscreenPageLimit(bean.getCommon().getLinks().size());
+        viewPager.setLayoutParams(viewpagerlp);
         PagerAdapter adapter = new PagerAdapter(((AppCompatActivity) contextImp.getContext()).getSupportFragmentManager());
+
+        mTitles = new ArrayList<>();
         for (int i = 0; i < bean.getCommon().getLinks().size(); i++) {
             mTitles.add(bean.getCommon().getLinks().get(i).getText());
             try {
@@ -84,12 +92,6 @@ public class TabTitleView extends BaseView<LinearLayout> {
             }
         }
 
-        viewPager.setCanScroll(false);
-        viewPager.setId(View.generateViewId());
-        viewPager.setOffscreenPageLimit(bean.getCommon().getLinks().size());
-        viewPager.setAdapter(adapter);
-        viewPager.setLayoutParams(viewpagerlp);
-        linearLayout.addView(viewPager);
         CommonNavigator commonNavigator = new CommonNavigator(contextImp.getContext());
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
@@ -125,7 +127,14 @@ public class TabTitleView extends BaseView<LinearLayout> {
             }
         });
         magicIndicator.setNavigator(commonNavigator);
+        viewPager.setAdapter(adapter);
+        view.addView(magicIndicator);
+        view.addView(viewPager);
         ViewPagerHelper.bind(magicIndicator, viewPager);
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
         return true;
     }
 
