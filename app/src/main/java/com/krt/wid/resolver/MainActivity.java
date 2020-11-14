@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ((TextView)findViewById(R.id.version)).setText("解析器版本:"+BuildConfig.VERSION_NAME);
         MPermissions.getInstance().request(this,
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE}
@@ -53,12 +53,9 @@ public class MainActivity extends AppCompatActivity {
                                 .build();
 
                         btnScan = findViewById(R.id.button_scan);
-                        btnScan.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
-                                startActivityForResult(intent, REQUEST_CODE);
-                            }
+                        btnScan.setOnClickListener(view -> {
+                            Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
+                            startActivityForResult(intent, REQUEST_CODE);
                         });
 
                         tvKrtCode = findViewById(R.id.krtCode);
@@ -127,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                         Long s = (System.currentTimeMillis() - timestamp) / (1000 * 60);
                         if (s > 10) {
                             MToast.showToast(this, "此二维码信息已超时");
+                            cardView.setVisibility(View.GONE);
+                            return;
                         } else {
                             tvKrtCode.setText("项目编号：" + ParseJsonUtil.getStringByKey(dataJson, "tag"));
                             tvKrtVer.setText("项目版本：" + ParseJsonUtil.getStringByKey(dataJson, "version"));

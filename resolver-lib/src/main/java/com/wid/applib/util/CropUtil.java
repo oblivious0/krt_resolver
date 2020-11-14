@@ -48,10 +48,7 @@ public class CropUtil {
                         return new Object();
                     }
                     Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-
                     String[] origin = linksBean.getOriginSkin().split("_");
-
-                    LogUtils.e(origin);
                     Bitmap originImg = Bitmap.createBitmap(bitmap, Integer.parseInt(origin[2]) - 1, Integer.parseInt(origin[3]), Integer.parseInt(origin[0]) - 1, Integer.parseInt(origin[1]) - 1);
                     String[] select = linksBean.getSelectSkin().split("_");
                     Bitmap selectImg = Bitmap.createBitmap(bitmap, Integer.parseInt(select[2]) - 1, Integer.parseInt(select[3]), Integer.parseInt(select[0]) - 1, Integer.parseInt(select[1]) - 1);
