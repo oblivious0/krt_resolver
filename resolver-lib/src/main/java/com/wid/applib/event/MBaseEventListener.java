@@ -19,6 +19,7 @@ import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.tool.PropertyBindTool;
 import com.wid.applib.util.AjaxUtil;
 import com.wid.applib.view.MRecyclerView;
+import com.wid.applib.view.widget.BaseView;
 import com.youth.banner.Banner;
 
 import org.greenrobot.eventbus.EventBus;
@@ -124,7 +125,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
         switch (eventBean.getType()) {
             case EventMessageWarp.NAVIGATOR:
 
-                if (!TextUtils.isEmpty(eventBean.getNaviType())&&eventBean.getNaviType().equals("navigateBack")) {
+                if (!TextUtils.isEmpty(eventBean.getNaviType()) && eventBean.getNaviType().equals("navigateBack")) {
                     ((Activity) view.getContext()).finish();
                     return;
                 }
@@ -184,16 +185,15 @@ public abstract class MBaseEventListener implements ViewEventImp {
                     switch (actionBean.getType()) {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
-                                PropertyBindTool.bindData(contextImp.getContext(),
-                                        (View) contextImp.getContainer("view").get(val[1]),
-                                        val[0], attr.getTarget(), attr.getAttr().split("_")[1]);
+                                ((BaseView) contextImp.getContainer("view").get(val[1]))
+                                        .bindData(val[1],attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
                         case "hid":
-                            ((View) contextImp.getContainer("view").get(val[1])).setVisibility(View.GONE);
+                            ((BaseView) contextImp.getContainer("view").get(val[1])).view.setVisibility(View.GONE);
                             break;
                         case "clear":
-                            View view1 = ((View) contextImp.getContainer("view").get(val[1]));
+                            View view1 = ((BaseView) contextImp.getContainer("view").get(val[1])).view;
                             if (view1 instanceof MRecyclerView) {
                                 ((BaseQuickAdapter) ((MRecyclerView) view1).getAdapter()).getData().clear();
                             } else if (view1 instanceof Banner) {

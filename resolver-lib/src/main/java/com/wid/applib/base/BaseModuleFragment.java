@@ -22,6 +22,7 @@ import com.wid.applib.exception.ModuleJsonParseException;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.util.Util;
+import com.wid.applib.view.widget.BaseView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,7 +46,7 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
     /**
      * 模块化组件容器，KEY：组件CID，VALUE：组件实例
      */
-    public HashMap<String, View> viewContainer = new HashMap<>();
+    public HashMap<String, BaseView> viewContainer = new HashMap<>();
 
     /**
      * 模块化网络请求反射bean容器，KEY:AJAX的CID，VALUE：实体类

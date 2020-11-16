@@ -18,6 +18,7 @@ import com.wid.applib.imp.ContextImp;
 import com.wid.applib.tool.ModuleViewFactory;
 import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.SpUtil;
+import com.wid.applib.view.widget.BaseView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,12 +125,15 @@ public class AppLibManager {
         if (nav == null || nav.isEmpty()) {
             Log.i(TAG, "The unresolved header[node] json !");
         } else {
-            List<View> navViews = ModuleViewFactory.generate(nav, moduleUI);
-            if (!navViews.isEmpty()) {
-                for (View view : navViews) {
-                    headerView.addView(view);
-                }
-            }
+            List<BaseView> views = new ArrayList<>();
+            ModuleViewFactory.createViews(nav, moduleUI, headerView, views, true);
+
+//            List<View> navViews = ModuleViewFactory.generate(nav, moduleUI);
+//            if (!navViews.isEmpty()) {
+//                for (View view : navViews) {
+//                    headerView.addView(view);
+//                }
+//            }
         }
 
         FrameLayout contentView = moduleUI.getContentView();
@@ -138,46 +142,49 @@ public class AppLibManager {
             Log.i(TAG, "The unresolved body[node] json !");
             return;
         }
+//
+//        List<View> viewList = ModuleViewFactory.generate(list, moduleUI);
+//        if (!viewList.isEmpty()) {
+//            for (View view : viewList) {
+//                contentView.addView(view);
+//            }
+//        }
 
-        List<View> viewList = ModuleViewFactory.generate(list, moduleUI);
-        if (!viewList.isEmpty()) {
-            for (View view : viewList) {
-                contentView.addView(view);
-            }
-        }
+        List<BaseView> views = new ArrayList<>();
+        ModuleViewFactory.createViews(list, moduleUI, contentView, views, true);
 
-        String broadcastJson = ParseJsonUtil.getStringByKey(json, JsonValue.BROADCAST);
-        if (!TextUtils.isEmpty(broadcastJson)) {
-            List<BroadCastBean> broadCastBeanList = ParseJsonUtil.getBeanList(broadcastJson, BroadCastBean.class);
-            for (BroadCastBean bean : broadCastBeanList) {
-                moduleUI.getContainer("broadCast").put(bean.getCid(), bean);
-            }
-        }
-
-        String ajaxJson = ParseJsonUtil.getStringByKey(json, JsonValue.AJAX);
-        if (!TextUtils.isEmpty(ajaxJson)) {
-            List<AjaxBean> ajaxBeanList = ParseJsonUtil.getBeanList(ajaxJson, AjaxBean.class);
-            for (AjaxBean ajaxBean : ajaxBeanList) {
-                moduleUI.getContainer("ajax").put(ajaxBean.getCid(), ajaxBean);
-            }
-        }
-
-        String eventJson = ParseJsonUtil.getStringByKey(json, JsonValue.EVENT);
-        if (!TextUtils.isEmpty(eventJson)) {
-            List<EventBean> eventBeanList = ParseJsonUtil.getBeanList(eventJson, EventBean.class);
-            for (EventBean eventBean : eventBeanList) {
-                moduleUI.getContainer("eventBus")
-                        .put(eventBean.getCid(), new EventBusListener(eventBean));
-            }
-        }
-
-        String stateJson = ParseJsonUtil.getStringByKey(json, JsonValue.STATE);
-        if (!TextUtils.isEmpty(stateJson)) {
-            List<StateBean> stateBeanList = ParseJsonUtil.getBeanList(stateJson, StateBean.class);
-            for (StateBean stateBean : stateBeanList) {
-                moduleUI.getContainer("state").put(stateBean.getCid(), stateBean);
-            }
-        }
+//        String broadcastJson = ParseJsonUtil.getStringByKey(json, JsonValue.BROADCAST);
+//        if (!TextUtils.isEmpty(broadcastJson)) {
+//            List<BroadCastBean> broadCastBeanList = ParseJsonUtil.getBeanList(broadcastJson, BroadCastBean.class);
+//            for (BroadCastBean bean : broadCastBeanList) {
+//                moduleUI.getContainer("broadCast").put(bean.getCid(), bean);
+//            }
+//        }
+//
+//        String ajaxJson = ParseJsonUtil.getStringByKey(json, JsonValue.AJAX);
+//        if (!TextUtils.isEmpty(ajaxJson)) {
+//            List<AjaxBean> ajaxBeanList = ParseJsonUtil.getBeanList(ajaxJson, AjaxBean.class);
+//            for (AjaxBean ajaxBean : ajaxBeanList) {
+//                moduleUI.getContainer("ajax").put(ajaxBean.getCid(), ajaxBean);
+//            }
+//        }
+//
+//        String eventJson = ParseJsonUtil.getStringByKey(json, JsonValue.EVENT);
+//        if (!TextUtils.isEmpty(eventJson)) {
+//            List<EventBean> eventBeanList = ParseJsonUtil.getBeanList(eventJson, EventBean.class);
+//            for (EventBean eventBean : eventBeanList) {
+//                moduleUI.getContainer("eventBus")
+//                        .put(eventBean.getCid(), new EventBusListener(eventBean));
+//            }
+//        }
+//
+//        String stateJson = ParseJsonUtil.getStringByKey(json, JsonValue.STATE);
+//        if (!TextUtils.isEmpty(stateJson)) {
+//            List<StateBean> stateBeanList = ParseJsonUtil.getBeanList(stateJson, StateBean.class);
+//            for (StateBean stateBean : stateBeanList) {
+//                moduleUI.getContainer("state").put(stateBean.getCid(), stateBean);
+//            }
+//        }
 
         if (listener != null) {
             listener.onFinish();

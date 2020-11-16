@@ -1,30 +1,32 @@
 package com.wid.applib.tool;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.view.View;
+import android.view.ViewGroup;
 
-import com.wid.applib.MLib;
+import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.bean.BaseLayoutBean;
-import com.wid.applib.bean.EventBean;
 import com.wid.applib.imp.ContextImp;
-import com.wid.applib.util.EventBindUtil;
 import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.ViewValue;
-import com.wid.applib.view.module.BannerWidget;
-import com.wid.applib.view.module.ButtonWidget;
-import com.wid.applib.view.module.DefaulView;
-import com.wid.applib.view.module.LabelWidget;
-import com.wid.applib.view.module.LayoutWidget;
-import com.wid.applib.view.module.ListMenus;
-import com.wid.applib.view.module.ListWidget;
-import com.wid.applib.view.module.NavbarWidget;
-import com.wid.applib.view.module.PicWidget;
-import com.wid.applib.view.module.TabTitle;
+import com.wid.applib.view.widget.BannerView;
+import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.view.widget.ButtonView;
+import com.wid.applib.view.widget.DefaultView;
+import com.wid.applib.view.widget.LabelView;
+import com.wid.applib.view.widget.LayoutView;
+import com.wid.applib.view.widget.ListDataView;
+import com.wid.applib.view.widget.ListMenuView;
+import com.wid.applib.view.widget.NavbarView;
+import com.wid.applib.view.widget.PicView;
+import com.wid.applib.view.widget.TabTitleView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
 import krt.wid.util.ParseJsonUtil;
 
 
@@ -35,94 +37,64 @@ import krt.wid.util.ParseJsonUtil;
  */
 public class ModuleViewFactory {
 
-    public static List<View> generate(List<BaseLayoutBean> list, ContextImp contextImp) {
-        List<View> views = new ArrayList<>();
-
+    @SuppressLint("CheckResult")
+    public static void createViews(List<BaseLayoutBean> list, ContextImp contextImp,
+                                   ViewGroup vg, List<BaseView> views, boolean isChild) {
         Collections.sort(list, (o1, o2) -> o1.getCommon().getzIndex() - o2.getCommon().getzIndex());
 
-        for (int i = 0; i < list.size(); i++) {
-            Object object = list.get(i);
-            String type = ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(object), JsonValue.TYPE);
-
-            String cids = ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(object), "cid");
-//            if (cids.equals("120tjt3i8wx")){
-//                LogUtils.e("120tjt3i8wx");
-//            }
-
+        for (BaseLayoutBean bean : list) {
+            String type = ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(bean), JsonValue.TYPE);
             if (TextUtils.isEmpty(type)) {
-                continue;
+                return;
             }
-
-            View view = null;
-
+            BaseView baseView = null;
             switch (type) {
                 case ViewValue.LISTMENUS:
-                    view = new ListMenus(contextImp, object).generate();
+                    baseView = new ListMenuView(contextImp, bean, isChild);
                     break;
                 case ViewValue.LAYOUT:
-                    view = new LayoutWidget(contextImp, object).generate();
+                    baseView = new LayoutView(contextImp, bean, isChild);
                     break;
                 case ViewValue.PIC:
-                    view = new PicWidget(contextImp, object).generate();
+                    baseView = new PicView(contextImp, bean, isChild);
                     break;
                 case ViewValue.LABEL:
-                    view = new LabelWidget(contextImp, object).generate();
+                    baseView = new LabelView(contextImp, bean, isChild);
                     break;
                 case ViewValue.LIST:
-                    view = new ListWidget(contextImp, object).generate();
+                    baseView = new ListDataView(contextImp, bean, isChild);
                     break;
                 case ViewValue.BUTTON:
-                    view = new ButtonWidget(contextImp, object).generate();
+                    baseView = new ButtonView(contextImp, bean, isChild);
                     break;
                 case ViewValue.NAVBAR:
-                    view = new NavbarWidget(contextImp, object).generate();
+                    baseView = new NavbarView(contextImp, bean, isChild);
                     break;
                 case ViewValue.BANNER:
-                    view = new BannerWidget(contextImp, object).generate();
+                    baseView = new BannerView(contextImp, bean, isChild);
                     break;
                 case ViewValue.TABTITLE:
-                    view = new TabTitle(contextImp, object).generate();
+                    baseView = new TabTitleView(contextImp, bean, isChild);
                     break;
                 default:
                     if (contextImp.getConvertTool() != null) {
-                        view = contextImp.getConvertTool().convert(type, object);
+                        baseView = contextImp.getConvertTool().convert(type, bean, isChild);
                     }
-                    if (view == null) {
-                        view = new DefaulView(contextImp, object).generate();
+                    if (baseView == null) {
+                        baseView = new DefaultView(contextImp, bean, isChild);
                     }
                     break;
             }
-            if (view != null) {
-                if (contextImp.getOnClickTool() != null) {
-                    List<EventBean> obj = ParseJsonUtil.getBeanList(
-                            ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(object), "event"),
-                            EventBean.class);
-                    if (obj != null) {
-                        view.setClickable(false);
-                        if (obj.size() != 0) {
-                            List<EventBean> events = new ArrayList<>();
-                            for (int z = 0; z < obj.size(); z++) {
-                                if (obj.get(z).getTerminal()==null){
-                                    events.add(obj.get(z));
-                                    continue;
-                                }
-                                if (obj.get(z).getTerminal().contains(MLib.TERMINAL)) {
-                                    events.add(obj.get(z));
-                                }
-                            }
-                            EventBindUtil.bindClick(view, contextImp.getOnClickTool(), events);
-                        } else {
-                            view.setClickable(false);
-                        }
-                    }
-                }
+            if (!isChild) {
+                contextImp.getContainer("view").put(baseView.cid, baseView);
             }
-
-            String cid = ParseJsonUtil.getStringByKey(ParseJsonUtil.toJson(object), "cid");
-            contextImp.getContainer("view").put(cid, view);
-            views.add(view);
+            if (baseView.view == null) {
+                LogUtils.e(baseView.cid);
+            } else {
+                vg.addView(baseView.view);
+            }
+            views.add(baseView);
         }
 
-        return views;
     }
 }

@@ -2,6 +2,7 @@ package com.wid.applib.event;
 
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wid.applib.bean.ActionBean;
 import com.wid.applib.bean.AjaxBean;
@@ -11,6 +12,7 @@ import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.tool.PropertyBindTool;
 import com.wid.applib.util.AjaxUtil;
 import com.wid.applib.view.MRecyclerView;
+import com.wid.applib.view.widget.BaseView;
 import com.youth.banner.Banner;
 
 import java.util.ArrayList;
@@ -59,20 +61,6 @@ public class EventBusListener {
                 }
                 break;
             case EventMessageWarp.STATE_CHANGE:
-                /**
-                 * {
-                 *           "name": "用户昵称",
-                 *           "target": "layout%krt%koyc74hhx2%krt_label%krt%4jmelk5yxg",
-                 *           "attrList": [
-                 *             {
-                 *               "attr": "common_text",
-                 *               "target": "请登录"
-                 *             }
-                 *           ],
-                 *           "type": "attr"
-                 *         }
-                 */
-
                 for (ActionBean actionBean : bean.getList()) {
                     String[] cell = actionBean.getTarget().split("%krt_");
                     String[] val = cell[cell.length - 1].split("%krt%");
@@ -80,16 +68,15 @@ public class EventBusListener {
                     switch (actionBean.getType()) {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
-                                PropertyBindTool.bindData(contextImp.getContext(),
-                                        (View) contextImp.getContainer("view").get(val[1]),
-                                        val[0], attr.getTarget(), attr.getAttr().split("_")[1]);
+                                ((BaseView) contextImp.getContainer("view").get(val[1]))
+                                        .bindData(val[1],attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
                         case "hid":
-                            ((View) contextImp.getContainer("view").get(val[1])).setVisibility(View.GONE);
+                            ((BaseView) contextImp.getContainer("view").get(val[1])).view.setVisibility(View.GONE);
                             break;
                         case "clear":
-                            View view = ((View) contextImp.getContainer("view").get(val[1]));
+                            View view = ((BaseView) contextImp.getContainer("view").get(val[1])).view;
                             if (view instanceof MRecyclerView) {
                                 ((BaseQuickAdapter) ((MRecyclerView) view).getAdapter()).getData().clear();
                             } else if (view instanceof Banner) {
