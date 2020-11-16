@@ -65,8 +65,10 @@ public class EventBusListener {
                     switch (actionBean.getType()) {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
-                                ((BaseView) contextImp.getContainer("view").get(val[1]))
-                                        .bindData(val[1],attr.getAttr().split("_")[1], attr.getTarget());
+                                if (contextImp.getContainer("view").get(val[1]) != null) {
+                                    ((BaseView) contextImp.getContainer("view").get(val[1]))
+                                            .bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
+                                }
                             }
                             break;
                         case "hid":

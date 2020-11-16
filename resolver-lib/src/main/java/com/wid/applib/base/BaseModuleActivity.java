@@ -75,6 +75,7 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
     private FrameLayout navbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private AppLibManager manager;
+    private boolean isInitView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,7 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
 
                                 @Override
                                 public void onFinish() {
+                                    isInitView = true;
                                     excute();
                                 }
                             })
@@ -126,6 +128,7 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
     }
 
     public void excute() {
+        if (!isInitView) return;
         for (StateBean bean : stateContainer.values()) {
             switch (bean.getType()) {
                 case "created":

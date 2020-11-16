@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.R;
 import com.wid.applib.bean.AjaxBean;
 import com.wid.applib.bean.BroadCastBean;
@@ -31,7 +32,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import krt.wid.http.MCallBack;
 import krt.wid.http.Result;
 import krt.wid.util.ParseJsonUtil;
@@ -74,6 +77,8 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
     protected FrameLayout parent;
     protected FrameLayout navbar;
     protected SwipeRefreshLayout swipeRefreshLayout;
+
+    private boolean isInitView = false;
 
     private String jsonFile;
     private AppLibManager manager;
@@ -123,6 +128,7 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
     protected abstract void init();
 
     public void excute() {
+        if (!isInitView) return;
         for (StateBean bean : stateContainer.values()) {
             switch (bean.getType()) {
                 case "created":
@@ -212,6 +218,7 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
 
                                 @Override
                                 public void onFinish() {
+                                    isInitView = true;
                                     excute();
                                 }
                             })

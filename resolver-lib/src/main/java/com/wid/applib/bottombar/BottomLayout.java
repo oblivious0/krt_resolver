@@ -173,7 +173,7 @@ public class BottomLayout extends LinearLayout {
         viewPager.setId(View.generateViewId());
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1);
         viewPager.setLayoutParams(lp);
-        viewPager.setOffscreenPageLimit(fragments.size());
+        viewPager.setOffscreenPageLimit(0);
         addView(viewPager);
     }
 

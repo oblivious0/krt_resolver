@@ -77,6 +77,7 @@ public class BindDataUtil {
     public static void bindListDatas(BaseLayoutBean bean, ContextImp imp, FrameLayout frameLayout, Object item) {
         List<BindDataBean> bindDatas = new ArrayList<>();
         List<BaseView> views = new ArrayList<>();
+        frameLayout.removeAllViews();
         ModuleViewFactory.createViews(bean.getChildren(), imp, frameLayout, views, true);
 
         if (bean.getAjax() != null && bean.getAjax().size() != 0) {

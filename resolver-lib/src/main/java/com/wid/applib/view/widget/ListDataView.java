@@ -56,9 +56,7 @@ public class ListDataView extends BaseView<MRecyclerView> {
         list = BindDataUtil.getDatas(bean);
         view = new MRecyclerView(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
-//                .setWidth(bean.getCommon().getWidth())
                 .setWidth(FrameLayout.LayoutParams.MATCH_PARENT)
-//                .setHeight(bean.getCommon().getHeight())
                 .setHeight(FrameLayout.LayoutParams.WRAP_CONTENT)
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())

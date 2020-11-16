@@ -41,6 +41,8 @@
             android:name=".module.BaseMainActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".web.WebActivity"/>
+
     </application>
 
 </manifest>

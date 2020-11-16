@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
@@ -153,7 +154,7 @@ public class TabTitleView extends BaseView<LinearLayout> {
         private List<Fragment> fragments = new ArrayList<>();
 
         public PagerAdapter(FragmentManager fm) {
-            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            super(fm, BEHAVIOR_SET_USER_VISIBLE_HINT);
         }
 
         public void addFragment(Fragment fragment) {
@@ -172,7 +173,7 @@ public class TabTitleView extends BaseView<LinearLayout> {
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-
+            container.removeView((View) object);
         }
     }
 }
