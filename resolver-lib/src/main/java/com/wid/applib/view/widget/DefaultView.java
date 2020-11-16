@@ -63,7 +63,7 @@ public class DefaultView extends BaseView<FrameLayout> {
     }
 
     @Override
-    public void bindData(String key, String val) {
+    public void bindData(String cid, String key, String val) {
 
     }
 }

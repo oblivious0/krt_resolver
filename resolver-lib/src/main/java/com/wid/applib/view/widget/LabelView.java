@@ -55,18 +55,6 @@ public class LabelView extends BaseView<TextView> {
             view.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
         }
 
-    }
-
-    @Override
-    protected boolean bindInNewThread() {
-
-
-        return true;
-    }
-
-    @Override
-    protected void bindInMainThread() {
-
         view.setText(bean.getCommon().getText().trim());
         if (bean.getStyle().getColor().contains("#")) {
             view.setTextColor(Color.parseColor(bean.getStyle().getColor()));
@@ -101,16 +89,31 @@ public class LabelView extends BaseView<TextView> {
     }
 
     @Override
-    public void bindData(String key, String val) {
-        switch (key) {
-            case "text":
-                view.setText(Html.fromHtml(val));
-                break;
-            case "fontSize":
-                view.setTextSize(Float.parseFloat(val));
-                break;
-            default:
-                break;
+    protected boolean bindInNewThread() {
+
+
+        return true;
+    }
+
+    @Override
+    protected void bindInMainThread() {
+
+
+    }
+
+    @Override
+    public void bindData(String cid, String key, String val) {
+        if (cid.equals(this.cid)) {
+            switch (key) {
+                case "text":
+                    view.setText(Html.fromHtml(val));
+                    break;
+                case "fontSize":
+                    view.setTextSize(Float.parseFloat(val));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

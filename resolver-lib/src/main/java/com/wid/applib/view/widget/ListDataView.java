@@ -64,10 +64,6 @@ public class ListDataView extends BaseView<MRecyclerView> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
-    }
-
-    @Override
-    protected boolean bindInNewThread() {
 
         //判断是横向还是纵向滑动
         RecyclerView.LayoutManager lm = null;
@@ -134,7 +130,10 @@ public class ListDataView extends BaseView<MRecyclerView> {
             }
         } catch (Exception e) {
         }
+    }
 
+    @Override
+    protected boolean bindInNewThread() {
         return true;
     }
 
@@ -144,7 +143,7 @@ public class ListDataView extends BaseView<MRecyclerView> {
     }
 
     @Override
-    public void bindData(String key, String val) {
+    public void bindData(String cid, String key, String val) {
 
     }
 

@@ -52,18 +52,8 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                 .build();
 
         view.setLayoutParams(lp);
-    }
-
-    @Override
-    protected boolean bindInNewThread() {
         int radius = Util.getRealValue(bean.getStyle().getBorderRadius()) / 2;
         view.setCornerRadiiDP(radius, radius, radius, radius);
-        return true;
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    protected void bindInMainThread() {
         switch (bean.getStyle().getMode()) {
             case "aspectFit":
                 view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -114,14 +104,28 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
     }
 
     @Override
-    public void bindData(String key, String val) {
-        switch (key) {
-            case "src":
-            case "iconFileName":
-                MGlideUtil.load(contextImp.getContext(), val, view);
-                break;
-            default:
-                break;
+    protected boolean bindInNewThread() {
+
+        return true;
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    protected void bindInMainThread() {
+
+    }
+
+    @Override
+    public void bindData(String cid, String key, String val) {
+        if (cid.equals(this.cid)) {
+            switch (key) {
+                case "src":
+                case "iconFileName":
+                    MGlideUtil.load(contextImp.getContext(), val, view);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

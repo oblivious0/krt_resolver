@@ -63,12 +63,7 @@ public class BannerView extends BaseView<Banner> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
-    }
-
-    @Override
-    protected boolean bindInNewThread() {
         adapter = new ImageAdapter();
-
         CircleIndicator circleIndicator = new CircleIndicator(contextImp.getContext());
         view.setAdapter(adapter)
                 .setDelayTime(bean.getStyle().getSlidingInterval() * 1000)
@@ -80,12 +75,6 @@ public class BannerView extends BaseView<Banner> {
                         bean.getStyle().getIndicatorWidth() * 2)
                 .start();
 
-
-        return true;
-    }
-
-    @Override
-    protected void bindInMainThread() {
         if (list == null) {
             MCallBack callBack = new MCallBack<Result>((Activity) contextImp.getContext(), false) {
                 @Override
@@ -126,7 +115,19 @@ public class BannerView extends BaseView<Banner> {
     }
 
     @Override
-    public void bindData(String key, String val) {
+    protected boolean bindInNewThread() {
+
+
+        return true;
+    }
+
+    @Override
+    protected void bindInMainThread() {
+
+    }
+
+    @Override
+    public void bindData(String cid, String key, String val) {
 
     }
 

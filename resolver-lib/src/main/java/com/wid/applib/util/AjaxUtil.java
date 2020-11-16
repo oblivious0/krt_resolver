@@ -112,7 +112,7 @@ public class AjaxUtil {
                                 if (bindK[0].equals("data")) {
 
                                     ((BaseView) contextImp.getContainer("view").get(cid))
-                                            .bindData(pro, ParseJsonUtil.getStringByKey(data, bindK[1]));
+                                            .bindData(cid, pro, ParseJsonUtil.getStringByKey(data, bindK[1]));
 
 //                                    PropertyBindTool.bindData(contextImp.getContext(),
 //                                            (View) contextImp.getContainer("view").get(cid),

@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class LayoutView extends BaseView<FrameLayout> {
 
-    public List<BaseView> childViews = new ArrayList<>();
+    public List<BaseView> childViews;
 
     public LayoutView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
@@ -38,6 +38,7 @@ public class LayoutView extends BaseView<FrameLayout> {
     @Override
     protected void initView() {
         type = "layout";
+        childViews = new ArrayList<>();
         if (bean.getCommon() != null && Util.getRealColor(bean.getCommon().getShadowColor()) != 0
                 && Util.getRealColor(bean.getCommon().getShadowColor()) != -1) {
             view = new CardView(contextImp.getContext());
@@ -61,6 +62,11 @@ public class LayoutView extends BaseView<FrameLayout> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
+        view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
+        if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
+            ModuleViewFactory.createViews(bean.getChildren(), contextImp, view, childViews, isListChild);
+        }
+
     }
 
     @Override
@@ -71,14 +77,20 @@ public class LayoutView extends BaseView<FrameLayout> {
 
     @Override
     protected void bindInMainThread() {
-        view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
-        if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
-            ModuleViewFactory.createViews(bean.getChildren(), contextImp, view, childViews, isListChild);
-        }
+
     }
 
     @Override
-    public void bindData(String key, String val) {
+    public void bindData(String cid, String key, String val) {
+        if (cid.equals(this.cid)) {
+
+        }
+
+        if (childViews.size() != 0) {
+            for (BaseView baseV : childViews) {
+                baseV.bindData(cid, key, val);
+            }
+        }
 
     }
 }

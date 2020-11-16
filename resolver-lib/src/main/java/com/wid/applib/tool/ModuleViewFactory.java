@@ -61,9 +61,9 @@ public class ModuleViewFactory {
                 case ViewValue.LABEL:
                     baseView = new LabelView(contextImp, bean, isChild);
                     break;
-//                case ViewValue.LIST:
-//                    baseView = new ListDataView(contextImp, bean, isChild);
-//                    break;
+                case ViewValue.LIST:
+                    baseView = new ListDataView(contextImp, bean, isChild);
+                    break;
                 case ViewValue.BUTTON:
                     baseView = new ButtonView(contextImp, bean, isChild);
                     break;

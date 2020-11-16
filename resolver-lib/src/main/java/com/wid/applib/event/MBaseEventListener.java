@@ -186,7 +186,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
                                 ((BaseView) contextImp.getContainer("view").get(val[1]))
-                                        .bindData(attr.getAttr().split("_")[1], attr.getTarget());
+                                        .bindData(val[1],attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
                         case "hid":

@@ -88,55 +88,11 @@ public class BindDataUtil {
         if (bindDatas.size() == 0) return;
 
         for (BaseView baseV : views) {
-
-            if (baseV instanceof LayoutView) {
-
-            } else {
-                for (int j = 0; j < bindDatas.size(); j++) {
-                    BindDataUtil util = new BindDataUtil(bindDatas.get(j).getOriginKey());
-                    if (util.getCid().equals(baseV.cid)) {
-                        String val = PropertyBindTool.getProperty(bindDatas.get(j).getBindKeys(), item);
-                        LogUtils.e(util.getViewProperty(), val, baseV.type);
-                        baseV.bindData(util.getViewProperty(), val);
-                    }
-                }
+            for (int j = 0; j < bindDatas.size(); j++) {
+                BindDataUtil util = new BindDataUtil(bindDatas.get(j).getOriginKey());
+                String val = PropertyBindTool.getProperty(bindDatas.get(j).getBindKeys(), item);
+                baseV.bindData(util.getCid(), util.getViewProperty(), val);
             }
         }
-
-//        if (bindDatas != null) {
-//            String tag = "";
-//            String childTag = "";
-//
-//            for (int i = 0; i < views.size(); i++) {
-//                View view = views.get(i).view;
-//                tag = views.get(i).cid;
-//                //如果是容器布局需要循环子view进行绑定
-//                if (views.get(i) instanceof LayoutView) {
-//                    LayoutView layout = (LayoutView) views.get(i);
-//                    for (int j = 0; j < layout.childViews.size(); j++) {
-//                        if (layout.childViews.get(j).cid == null) {
-//                            childTag = layout.childViews.get(j).cid;
-//                        }
-//
-//                        for (int z = 0; z < bindDatas.size(); z++) {
-//                            BindDataUtil util1 = new BindDataUtil(bindDatas.get(z).getOriginKey());
-//                            if (util1.getCid().equals(childTag)) {
-//                                String val = PropertyBindTool.getProperty(bindDatas.get(z).getBindKeys(), item);
-//                                layout.bindData(util1.getViewProperty(), val);
-//                            }
-//                        }
-//                    }
-//
-//                } else {
-//
-//                }
-//
-//                try {
-//                    frameLayout.addView(view);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 }

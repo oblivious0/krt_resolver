@@ -54,7 +54,7 @@ public class ListMenuView extends BaseView<RecyclerView> {
     }
 
     @Override
-    public void bindData(String key, String val) {
+    public void bindData(String cid, String key, String val) {
 
     }
 }

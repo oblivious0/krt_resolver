@@ -123,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     dataJson = bundle.getString(CodeUtils.RESULT_STRING);
                     if (!TextUtils.isEmpty(dataJson)) {
-                        long timestamp = Long.parseLong(ParseJsonUtil.getStringByKey(dataJson, "timestamp"));
-                        Long s = (System.currentTimeMillis() - timestamp) / (1000 * 60);
-                        if (s > 10) {
-                            MToast.showToast(this, "此二维码信息已超时");
-                        } else {
-                            tvKrtCode.setText("项目编号：" + ParseJsonUtil.getStringByKey(dataJson, "tag"));
-                            tvKrtVer.setText("项目版本：" + ParseJsonUtil.getStringByKey(dataJson, "version"));
-                        }
+//                        long timestamp = Long.parseLong(ParseJsonUtil.getStringByKey(dataJson, "timestamp"));
+//                        Long s = (System.currentTimeMillis() - timestamp) / (1000 * 60);
+//                        if (s > 10) {
+//                            MToast.showToast(this, "此二维码信息已超时");
+//                        } else {
+                        tvKrtCode.setText("项目编号：" + ParseJsonUtil.getStringByKey(dataJson, "tag"));
+                        tvKrtVer.setText("项目版本：" + ParseJsonUtil.getStringByKey(dataJson, "version"));
+//                        }
                     }
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                     dataJson = "";
