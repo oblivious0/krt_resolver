@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.krt.wid.resolver.TestActivity;
+import com.krt.wid.resolver.module.BaseActivity;
 import com.krt.wid.resolver.module.BaseFragment;
 import com.krt.wid.resolver.web.WebActivity;
 import com.wid.applib.bean.ParamBean;
@@ -76,7 +77,7 @@ public class BaseEventInstance extends MBaseEventListener {
             }
         }
 
-        Intent intent = new Intent(contextImp.getContext(), BaseFragment.class)
+        Intent intent = new Intent(contextImp.getContext(), BaseActivity.class)
                 .putExtra("name", jsonName)
                 .putExtra("param", ParseJsonUtil.toJson(paramBeans));
         contextImp.getContext().startActivity(intent);

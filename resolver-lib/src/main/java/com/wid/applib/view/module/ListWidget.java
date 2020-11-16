@@ -160,9 +160,7 @@ public class ListWidget extends BaseWidget {
                     .setMarginRight(bean.getCommon().getxPadding())
                     .setMarginBottom(bean.getCommon().getyPadding())
                     .build();
-
             frameLayout.setLayoutParams(lp);
-
             GradientDrawable drawable = Util.getBgDrawable(bean.getStyle().getBgColor(),
                     GradientDrawable.RECTANGLE, bean.getStyle().getBorderRadius(), bean.getStyle().getBorderWidth(),
                     bean.getStyle().getBorderColor());

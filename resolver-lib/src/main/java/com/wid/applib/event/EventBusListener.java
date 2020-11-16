@@ -31,9 +31,6 @@ public class EventBusListener {
     }
 
     public void execute(ContextImp contextImp) {
-
-//        LogUtils.e(ParseJsonUtil.toJson(bean));
-
         switch (bean.getType()) {
             case EventMessageWarp.SEND_AJAX:
                 for (String ids : bean.getAjaxIds()) {
@@ -88,12 +85,9 @@ public class EventBusListener {
                             break;
                     }
                 }
-
                 break;
             default:
                 break;
         }
-
-//        MToast.showToast(contextImp.getContext(), "收到广播");
     }
 }
