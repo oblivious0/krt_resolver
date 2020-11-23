@@ -12,11 +12,10 @@ import com.lzy.okgo.model.Response;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.imp.ContextImp;
-import com.wid.applib.util.AjaxUtil;
+import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.util.BindDataUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
-import com.wid.applib.view.module.BannerWidget;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerAdapter;
 import com.youth.banner.config.IndicatorConfig;
@@ -24,7 +23,6 @@ import com.youth.banner.indicator.CircleIndicator;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import krt.wid.bean.event.MEventBean;

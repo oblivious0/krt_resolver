@@ -62,7 +62,6 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                 view.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 break;
             default:
-                //scaleToFill
                 view.setScaleType(ImageView.ScaleType.FIT_XY);
                 break;
         }
@@ -84,11 +83,22 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                                         bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
                             });
                 }
-
             }
         } else {
             MGlideUtil.load(contextImp.getContext(), bean.getCommon().getSrc(), view);
         }
+
+    }
+
+    @Override
+    protected boolean bindInNewThread() {
+
+        return true;
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    protected void bindInMainThread() {
         if (!bean.getCommon().isHidden()) {
             if (bean.getAnimation() != null) {
                 Observable.timer(Math.round(bean.getAnimation().getDelay()) * 500, TimeUnit.MILLISECONDS)
@@ -101,18 +111,6 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
         } else {
             view.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    protected boolean bindInNewThread() {
-
-        return true;
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    protected void bindInMainThread() {
-
     }
 
     @Override

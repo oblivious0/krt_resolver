@@ -17,7 +17,7 @@ import com.wid.applib.bean.ParamBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.tool.PropertyBindTool;
-import com.wid.applib.util.AjaxUtil;
+import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.view.MRecyclerView;
 import com.wid.applib.view.widget.BaseView;
 import com.youth.banner.Banner;
@@ -130,7 +130,6 @@ public abstract class MBaseEventListener implements ViewEventImp {
                     return;
                 }
 
-
                 if (eventBean.isIfOuterChain() && !eventBean.isIfModulePage()) {
                     onStartWebActivity(view, eventBean.getUrl(), params);
                 } else if (eventBean.isIfModulePage() && !eventBean.isIfOuterChain()) {
@@ -186,7 +185,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
                                 ((BaseView) contextImp.getContainer("view").get(val[1]))
-                                        .bindData(val[1],attr.getAttr().split("_")[1], attr.getTarget());
+                                        .bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
                         case "hid":
@@ -194,7 +193,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                             break;
                         case "clear":
                             View view1 = ((BaseView) contextImp.getContainer("view").get(val[1])).view;
-                            if (view1 instanceof MRecyclerView) {
+                            if (         view1 instanceof MRecyclerView) {
                                 ((BaseQuickAdapter) ((MRecyclerView) view1).getAdapter()).getData().clear();
                             } else if (view1 instanceof Banner) {
                                 ((Banner) view1).getAdapter().setDatas(new ArrayList());

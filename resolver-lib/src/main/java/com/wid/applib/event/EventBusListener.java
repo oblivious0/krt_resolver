@@ -2,15 +2,13 @@ package com.wid.applib.event;
 
 import android.view.View;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wid.applib.bean.ActionBean;
 import com.wid.applib.bean.AjaxBean;
 import com.wid.applib.bean.EventBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
-import com.wid.applib.tool.PropertyBindTool;
-import com.wid.applib.util.AjaxUtil;
+import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.view.MRecyclerView;
 import com.wid.applib.view.widget.BaseView;
 import com.youth.banner.Banner;

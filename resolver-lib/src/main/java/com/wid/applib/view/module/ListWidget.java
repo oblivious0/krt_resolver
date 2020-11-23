@@ -21,7 +21,7 @@ import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bean.ParamBean;
 import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.imp.ContextImp;
-import com.wid.applib.util.AjaxUtil;
+import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.util.BindDataUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;

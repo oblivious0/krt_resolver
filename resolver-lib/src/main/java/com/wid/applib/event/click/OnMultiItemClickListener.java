@@ -1,4 +1,4 @@
-package com.wid.applib.util.click;
+package com.wid.applib.event.click;
 
 import android.view.View;
 

@@ -1,4 +1,4 @@
-package com.wid.applib.util;
+package com.wid.applib.http;
 
 import android.app.Activity;
 import android.text.TextUtils;
@@ -112,10 +112,6 @@ public class AjaxUtil {
                                 if (bindK[0].equals("data")) {
                                     ((BaseView) contextImp.getContainer("view").get(cid))
                                             .bindData(cid, pro, ParseJsonUtil.getStringByKey(data, bindK[1]));
-
-//                                    PropertyBindTool.bindData(contextImp.getContext(),
-//                                            (View) contextImp.getContainer("view").get(cid),
-//                                            type, ParseJsonUtil.getStringByKey(data, bindK[1]), pro);
                                 }
                             }
                         }
