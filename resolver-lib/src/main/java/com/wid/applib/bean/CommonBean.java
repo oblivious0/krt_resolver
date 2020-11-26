@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * author:Marcus
  * create on:2019/6/4 15:36
- * description
+ * description 组件公共样式配置类
  */
 public class CommonBean {
 

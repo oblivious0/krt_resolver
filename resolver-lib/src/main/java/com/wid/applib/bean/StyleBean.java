@@ -1,11 +1,10 @@
 package com.wid.applib.bean;
 
 
-
 /**
- * author:Marcus
+ * author:MaGua
  * create on:2019/6/4 15:35
- * description
+ * description 组件样式类
  */
 public class StyleBean {
 
@@ -80,6 +79,15 @@ public class StyleBean {
     private String backImgUrl;
     private String backIconParam;
     private String mode = "";
+    private boolean isCenter = false;
+
+    public boolean isCenter() {
+        return isCenter;
+    }
+
+    public void setCenter(boolean center) {
+        isCenter = center;
+    }
 
     public String getMode() {
         return mode;

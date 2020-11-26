@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.krt.wid.resolver.TestActivity;
 import com.krt.wid.resolver.module.BaseActivity;
 import com.krt.wid.resolver.module.BaseFragment;

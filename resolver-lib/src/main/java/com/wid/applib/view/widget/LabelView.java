@@ -90,14 +90,11 @@ public class LabelView extends BaseView<TextView> {
 
     @Override
     protected boolean bindInNewThread() {
-
-
         return true;
     }
 
     @Override
     protected void bindInMainThread() {
-
 
     }
 

@@ -92,6 +92,9 @@ public class AjaxUtil {
                                     String val = PropertyBindTool.getProperty(transferKeyBean.getKey().split("%krt_"), data);
 
                                     if (!TextUtils.isEmpty(transferKeyBean.getVariableName())) {
+                                        LogUtils.e(ParseJsonUtil.toJson(contextImp.getContainer("element")));
+
+                                        if (TextUtils.isEmpty(val)) continue;
                                         contextImp.getContainer("element").put(transferKeyBean.getVariableName(), val);
                                     }
 

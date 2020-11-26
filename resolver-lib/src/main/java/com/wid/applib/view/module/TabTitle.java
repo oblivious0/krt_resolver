@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
@@ -82,7 +83,7 @@ public class TabTitle extends BaseWidget {
                 adapter.addFragment(MProConfig.getInstance().getFragmentClz().newInstance().setJsonFile(
                         bean.getCommon().getLinks().get(i).getPageId()
                 ));
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -127,6 +128,7 @@ public class TabTitle extends BaseWidget {
                 return indicator;
             }
         });
+        commonNavigator.setAdjustMode(false);
         magicIndicator.setNavigator(commonNavigator);
         ViewPagerHelper.bind(magicIndicator, viewPager);
         return linearLayout;

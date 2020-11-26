@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.CloneUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.wid.applib.bean.ActionBean;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import krt.wid.util.MToast;
+import krt.wid.util.ParseJsonUtil;
 
 
 /**
@@ -47,6 +49,28 @@ public abstract class MBaseEventListener implements ViewEventImp {
     @Override
     public void onViewClick(View view, List<EventBean> eventBeans) {
         for (EventBean eventBean : eventBeans) {
+
+            List<ParamBean> paramBeans = new ArrayList<>();
+            //判断参数集是否为空，不为空将遍历参数集，把传出值替换为实际数据；
+            if (eventBean.getParams() != null) {
+                for (ParamBean paramBean : eventBean.getParams()) {
+                    ParamBean bean = new ParamBean();
+                    bean.setKey(paramBean.getKey());
+                    bean.setVal(paramBean.getVal());
+                    if ("static".equals(paramBean.getSource())) {
+                        if (bean.isFromBroad()) {
+                            //广播
+                            String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
+                            bean.setVal(val);
+                        }
+                    }else if("variable".equals(paramBean.getSource())){
+                        String val = contextImp.getContainer("element").get(bean.getVal()).toString();
+                        bean.setVal(val);
+                    }
+                    paramBeans.add(bean);
+                }
+            }
+
             action(view, eventBean, eventBean.getParams());
         }
     }
@@ -96,6 +120,9 @@ public abstract class MBaseEventListener implements ViewEventImp {
                             String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
                             bean.setVal(val);
                         }
+                    }else if("variable".equals(bean.getSource())){
+                        String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
+                        bean.setVal(val);
                     } else {
                         if (paramBean.getVal().contains("%krt_")) {
                             String val = PropertyBindTool.getProperty(paramBean.getVal().split("%krt_"), json);
