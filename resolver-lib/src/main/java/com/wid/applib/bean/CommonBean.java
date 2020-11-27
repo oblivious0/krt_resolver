@@ -48,6 +48,87 @@ public class CommonBean {
     private String title;
     private String backText;
     private String rightText;
+    private String timestamp;
+    private boolean showDays;
+    private boolean showHours;
+    private boolean showSeconds;
+    private boolean hideZeroDay;
+    private String separator;
+    private String separatorSize;
+    private String separatorColor;
+    private boolean isShowBorder;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public boolean isShowDays() {
+        return showDays;
+    }
+
+    public void setShowDays(boolean showDays) {
+        this.showDays = showDays;
+    }
+
+    public boolean isShowHours() {
+        return showHours;
+    }
+
+    public void setShowHours(boolean showHours) {
+        this.showHours = showHours;
+    }
+
+    public boolean isShowSeconds() {
+        return showSeconds;
+    }
+
+    public void setShowSeconds(boolean showSeconds) {
+        this.showSeconds = showSeconds;
+    }
+
+    public boolean isHideZeroDay() {
+        return hideZeroDay;
+    }
+
+    public void setHideZeroDay(boolean hideZeroDay) {
+        this.hideZeroDay = hideZeroDay;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
+
+    public String getSeparatorSize() {
+        return separatorSize;
+    }
+
+    public void setSeparatorSize(String separatorSize) {
+        this.separatorSize = separatorSize;
+    }
+
+    public String getSeparatorColor() {
+        return separatorColor;
+    }
+
+    public void setSeparatorColor(String separatorColor) {
+        this.separatorColor = separatorColor;
+    }
+
+    public boolean isShowBorder() {
+        return isShowBorder;
+    }
+
+    public void setShowBorder(boolean showBorder) {
+        isShowBorder = showBorder;
+    }
 
     public String getTitle() {
         return title;

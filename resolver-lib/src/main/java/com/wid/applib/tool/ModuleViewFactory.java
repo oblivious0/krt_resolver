@@ -12,6 +12,7 @@ import com.wid.applib.util.ViewValue;
 import com.wid.applib.view.widget.BannerView;
 import com.wid.applib.view.widget.BaseView;
 import com.wid.applib.view.widget.ButtonView;
+import com.wid.applib.view.widget.CountdownView;
 import com.wid.applib.view.widget.DefaultView;
 import com.wid.applib.view.widget.LabelView;
 import com.wid.applib.view.widget.LayoutView;
@@ -75,6 +76,9 @@ public class ModuleViewFactory {
                     break;
                 case ViewValue.TABTITLE:
                     baseView = new TabTitleView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.COUNTDOWN:
+                    baseView = new CountdownView(contextImp,bean,isChild);
                     break;
                 default:
                     if (contextImp.getConvertTool() != null) {

@@ -74,22 +74,15 @@ public abstract class BaseView<T extends View> {
         cid = bean.getCid();
         initView();
 
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                Observable.just(bean)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.newThread())
-                        .filter(baseLayoutBean -> bindInNewThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(baseLayoutBean -> {
-                            bindInMainThread();
-                            bindEvent();
-                        });
-            }
-        });
-
-
+        view.post(() -> Observable.just(bean)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.newThread())
+                .filter(baseLayoutBean -> bindInNewThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(baseLayoutBean -> {
+                    bindInMainThread();
+                    bindEvent();
+                }));
     }
 
     /**

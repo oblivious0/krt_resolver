@@ -95,8 +95,7 @@ public class BannerView extends BaseView<Banner> {
                         }
                     }
                     return result;
-                }
-            };
+                }            };
 
             if (!TextUtils.isEmpty(bean.getAjax().get(0).getCid())) {
                 contextImp.getContainer("callback").put(bean.getAjax().get(0).getCid(), callBack);

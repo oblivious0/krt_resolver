@@ -15,5 +15,6 @@ public class ViewValue {
     public static final String NAVBAR = "navbar";
     public static final String BANNER = "banner";
     public static final String TABTITLE = "tabTitle";
+    public static final String COUNTDOWN = "countDown";
 
 }
