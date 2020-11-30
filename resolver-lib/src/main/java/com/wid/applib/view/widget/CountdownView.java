@@ -6,13 +6,16 @@ import android.widget.LinearLayout;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.util.FrameParamsBuilder;
+import com.wid.applib.util.Util;
+import com.wid.applib.view.CountDown;
+
 
 /**
  * author: MaGua
  * create on:2020/11/27 15:21
- * description
+ * description 倒计时组件
  */
-public class CountdownView extends BaseView<LinearLayout> {
+public class CountdownView extends BaseView<CountDown> {
 
     public CountdownView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
@@ -25,30 +28,44 @@ public class CountdownView extends BaseView<LinearLayout> {
     @Override
     protected void initView() {
         type = "countDown";
-        LinearLayout layout = new LinearLayout(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
                 .setHeight(bean.getCommon().getHeight())
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
-        layout.setLayoutParams(lp);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-
+        CountDown countDown = new CountDown(contextImp.getContext());
+        countDown.setLayoutParams(lp);
+        countDown.setIsShowBorder(bean.getCommon().isShowBorder(), bean.getCommon().getBorderColor(),
+                bean.getCommon().getBgColor());
+        countDown.setTextStyle(bean.getCommon().getFontSize(),
+                Util.getRealColor(bean.getCommon().getColor()));
+        countDown.setSeparator(bean.getCommon().getSeparator(),
+                bean.getCommon().getSeparatorSize(),
+                Util.getRealColor(bean.getCommon().getSeparatorColor()));
+        countDown.setHidZeroDay(bean.getCommon().isHideZeroDay());
+        countDown.isShow(bean.getCommon().isShowDays(),
+                bean.getCommon().isShowHours(),
+                bean.getCommon().isShowMinutes(),
+                bean.getCommon().isShowSeconds());
+        countDown.setTimeStamp(bean.getCommon().getTimestamp());
+        view = countDown;
     }
 
     @Override
     protected boolean bindInNewThread() {
-        return false;
+        return true;
     }
 
     @Override
     protected void bindInMainThread() {
-
+        view.start();
     }
 
     @Override
     public void bindData(String cid, String key, String val) {
 
     }
+
+
 }

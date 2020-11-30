@@ -51,12 +51,49 @@ public class CommonBean {
     private String timestamp;
     private boolean showDays;
     private boolean showHours;
+    private boolean showMinutes;
     private boolean showSeconds;
     private boolean hideZeroDay;
     private String separator;
-    private String separatorSize;
+    private int separatorSize;
+    private int fontSize;
     private String separatorColor;
+    private String borderColor;
+    private String bgColor;
+    private String color;
     private boolean isShowBorder;
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(String borderColor) {
+        this.borderColor = borderColor;
+    }
 
     public String getTimestamp() {
         return timestamp;
@@ -80,6 +117,14 @@ public class CommonBean {
 
     public void setShowHours(boolean showHours) {
         this.showHours = showHours;
+    }
+
+    public boolean isShowMinutes() {
+        return showMinutes;
+    }
+
+    public void setShowMinutes(boolean showMinutes) {
+        this.showMinutes = showMinutes;
     }
 
     public boolean isShowSeconds() {
@@ -106,11 +151,11 @@ public class CommonBean {
         this.separator = separator;
     }
 
-    public String getSeparatorSize() {
+    public int getSeparatorSize() {
         return separatorSize;
     }
 
-    public void setSeparatorSize(String separatorSize) {
+    public void setSeparatorSize(int separatorSize) {
         this.separatorSize = separatorSize;
     }
 
