@@ -100,21 +100,25 @@ public class LabelView extends BaseView<TextView> {
 
     @Override
     public void bindData(String cid, String key, String val) {
-        if (cid.equals(this.cid)) {
-            switch (key) {
-                case "text":
-                    if (TextUtils.isEmpty(val)) {
-                        view.setText("");
-                    } else {
-                        view.setText(Html.fromHtml(val));
-                    }
-                    break;
-                case "fontSize":
-                    view.setTextSize(Float.parseFloat(val));
-                    break;
-                default:
-                    break;
+        try {
+            if (cid.equals(this.cid)) {
+                switch (key) {
+                    case "text":
+                        if (TextUtils.isEmpty(val)) {
+                            view.setText("");
+                        } else {
+                            view.setText(Html.fromHtml(val));
+                        }
+                        break;
+                    case "fontSize":
+                        view.setTextSize(Float.parseFloat(val));
+                        break;
+                    default:
+                        break;
+                }
             }
+        }catch (Exception e){
+
         }
     }
 }
