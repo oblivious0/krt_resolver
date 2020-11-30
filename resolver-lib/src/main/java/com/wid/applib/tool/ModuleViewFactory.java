@@ -16,6 +16,7 @@ import com.wid.applib.view.widget.CountdownView;
 import com.wid.applib.view.widget.DefaultView;
 import com.wid.applib.view.widget.LabelView;
 import com.wid.applib.view.widget.LayoutView;
+import com.wid.applib.view.widget.LineProgressBarView;
 import com.wid.applib.view.widget.ListDataView;
 import com.wid.applib.view.widget.ListMenuView;
 import com.wid.applib.view.widget.NavbarView;
@@ -79,6 +80,9 @@ public class ModuleViewFactory {
                     break;
                 case ViewValue.COUNTDOWN:
                     baseView = new CountdownView(contextImp,bean,isChild);
+                    break;
+                case ViewValue.LINEPROGRESS:
+                    baseView = new LineProgressBarView(contextImp, bean, isChild);
                     break;
                 default:
                     if (contextImp.getConvertTool() != null) {

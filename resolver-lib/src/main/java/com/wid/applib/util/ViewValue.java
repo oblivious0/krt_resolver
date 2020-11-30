@@ -16,5 +16,9 @@ public class ViewValue {
     public static final String BANNER = "banner";
     public static final String TABTITLE = "tabTitle";
     public static final String COUNTDOWN = "countDown";
+    /**
+     *横向进度条
+     */
+    public static final String LINEPROGRESS = "lineProgress";
 
 }

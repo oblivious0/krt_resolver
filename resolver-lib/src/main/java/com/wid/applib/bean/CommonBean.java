@@ -58,6 +58,79 @@ public class CommonBean {
     private String separatorColor;
     private boolean isShowBorder;
 
+    private String activeColor;
+    private String inactiveColor;
+    private int activeNum;
+    private int inactiveNum;
+    private boolean round;
+    private boolean showPercent;
+    private boolean striped;
+    private boolean stripedActive;
+
+    public String getActiveColor() {
+        return activeColor;
+    }
+
+    public void setActiveColor(String activeColor) {
+        this.activeColor = activeColor;
+    }
+
+    public String getInactiveColor() {
+        return inactiveColor;
+    }
+
+    public void setInactiveColor(String inactiveColor) {
+        this.inactiveColor = inactiveColor;
+    }
+
+    public int getActiveNum() {
+        return activeNum;
+    }
+
+    public void setActiveNum(int activeNum) {
+        this.activeNum = activeNum;
+    }
+
+    public int getInactiveNum() {
+        return inactiveNum;
+    }
+
+    public void setInactiveNum(int inactiveNum) {
+        this.inactiveNum = inactiveNum;
+    }
+
+    public boolean isRound() {
+        return round;
+    }
+
+    public void setRound(boolean round) {
+        this.round = round;
+    }
+
+    public boolean isShowPercent() {
+        return showPercent;
+    }
+
+    public void setShowPercent(boolean showPercent) {
+        this.showPercent = showPercent;
+    }
+
+    public boolean isStriped() {
+        return striped;
+    }
+
+    public void setStriped(boolean striped) {
+        this.striped = striped;
+    }
+
+    public boolean isStripedActive() {
+        return stripedActive;
+    }
+
+    public void setStripedActive(boolean stripedActive) {
+        this.stripedActive = stripedActive;
+    }
+
     public String getTimestamp() {
         return timestamp;
     }
