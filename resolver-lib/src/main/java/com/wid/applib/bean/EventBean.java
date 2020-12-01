@@ -69,6 +69,15 @@ public class EventBean {
     private String number;
 
     private List<String> terminal;
+    private List<String> development;
+
+    public List<String> getDevelopment() {
+        return development;
+    }
+
+    public void setDevelopment(List<String> development) {
+        this.development = development;
+    }
 
     public List<String> getTerminal() {
         return terminal;

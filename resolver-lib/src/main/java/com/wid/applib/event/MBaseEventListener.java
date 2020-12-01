@@ -157,7 +157,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                     return;
                 }
 
-                if (eventBean.isIfOuterChain() && !eventBean.isIfModulePage()) {
+                if (eventBean.isIfOuterChain() ) {
                     onStartWebActivity(view, eventBean.getUrl(), params);
                 } else if (eventBean.isIfModulePage() && !eventBean.isIfOuterChain()) {
                     onStartModuleActivity(view, eventBean.getPageId(), params);
