@@ -109,7 +109,9 @@ public class BottomLayout extends LinearLayout {
         }
         bottomBean = ParseJsonUtil.getBean(json, BottomBean.class);
         String skinPath = bottomBean.getCommon().getSkinName();
-        skinName = skinPath.substring(skinPath.lastIndexOf("/"));
+        LogUtils.e(skinPath);
+        if (skinPath!=null&&!TextUtils.isEmpty(skinPath.trim()))
+            skinName = skinPath.substring(skinPath.lastIndexOf("/"));
         allList = bottomBean.getCommon().getLinks();
         if (!TextUtils.isEmpty(bottomBean.getCommon().getSkinName())) {
             String[] names = bottomBean.getCommon().getSkinName().split("/");
@@ -138,7 +140,7 @@ public class BottomLayout extends LinearLayout {
          */
         list = new ArrayList<>();
         for (int i = 0; i < allList.size(); i++) {
-            if (allList.get(i).getTerminal()==null){
+            if (allList.get(i).getTerminal() == null) {
                 list.add(allList.get(i));
                 continue;
             }

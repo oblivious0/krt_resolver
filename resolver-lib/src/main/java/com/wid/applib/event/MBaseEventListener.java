@@ -63,7 +63,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                             String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
                             bean.setVal(val);
                         }
-                    }else if("variable".equals(paramBean.getSource())){
+                    } else if ("variable".equals(paramBean.getSource())) {
                         String val = contextImp.getContainer("element").get(bean.getVal()).toString();
                         bean.setVal(val);
                     }
@@ -120,7 +120,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                             String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
                             bean.setVal(val);
                         }
-                    }else if("variable".equals(bean.getSource())){
+                    } else if ("variable".equals(bean.getSource())) {
                         String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
                         bean.setVal(val);
                     } else {
@@ -157,8 +157,9 @@ public abstract class MBaseEventListener implements ViewEventImp {
                     return;
                 }
 
-                if (eventBean.isIfOuterChain() ) {
-                    onStartWebActivity(view, eventBean.getUrl(), params);
+                if (eventBean.isIfOuterChain()) {
+                    String url = disposeUrl(eventBean.getUrl(), eventBean.getDevelopment());
+                    onStartWebActivity(view, url, params);
                 } else if (eventBean.isIfModulePage() && !eventBean.isIfOuterChain()) {
                     onStartModuleActivity(view, eventBean.getPageId(), params);
                 } else {
@@ -220,7 +221,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                             break;
                         case "clear":
                             View view1 = ((BaseView) contextImp.getContainer("view").get(val[1])).view;
-                            if (         view1 instanceof MRecyclerView) {
+                            if (view1 instanceof MRecyclerView) {
                                 ((BaseQuickAdapter) ((MRecyclerView) view1).getAdapter()).getData().clear();
                             } else if (view1 instanceof Banner) {
                                 ((Banner) view1).getAdapter().setDatas(new ArrayList());
@@ -261,4 +262,6 @@ public abstract class MBaseEventListener implements ViewEventImp {
     protected abstract void onStartModuleActivity(View view, String jsonName, List<ParamBean> objects);
 
     protected abstract void onCallPhone(String number);
+
+    protected abstract String disposeUrl(String url, List<String> development);
 }

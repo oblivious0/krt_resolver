@@ -88,4 +88,18 @@ public class BaseEventInstance extends MBaseEventListener {
     protected void onCallPhone(String number) {
         MToast.showToast(contextImp.getContext(), "拨打电话：" + number);
     }
+
+    @Override
+    protected String disposeUrl(String url, List<String> development) {
+        if (development != null) {
+            if (development.size() != 0) {
+                if (development.contains("2")) {
+                    String urlStr = url.replace("#", "?iftest#");
+                    LogUtils.e(urlStr);
+                    return urlStr;
+                }
+            }
+        }
+        return url;
+    }
 }
