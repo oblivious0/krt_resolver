@@ -109,7 +109,6 @@ public class BottomLayout extends LinearLayout {
         }
         bottomBean = ParseJsonUtil.getBean(json, BottomBean.class);
         String skinPath = bottomBean.getCommon().getSkinName();
-        LogUtils.e(skinPath);
         if (skinPath!=null&&!TextUtils.isEmpty(skinPath.trim()))
             skinName = skinPath.substring(skinPath.lastIndexOf("/"));
         allList = bottomBean.getCommon().getLinks();

@@ -3,6 +3,7 @@ package com.wid.applib.view.widget;
 import android.annotation.SuppressLint;
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.MLib;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bean.EventBean;
@@ -120,6 +121,11 @@ public abstract class BaseView<T extends View> {
      * 绑定组件事件：当terminal默认为所有端都需要执行的事件
      */
     private void bindEvent() {
+
+        if(cid.equals("000600140089")){
+            LogUtils.e("");
+        }
+
         if (bean.getEvent() != null) {
             view.setClickable(false);
             if (bean.getEvent().size() != 0) {

@@ -212,19 +212,23 @@ public abstract class MBaseEventListener implements ViewEventImp {
                     switch (actionBean.getType()) {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
-                                ((BaseView) contextImp.getContainer("view").get(val[1]))
-                                        .bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
+                                BaseView baseView = ((BaseView) contextImp.getContainer("view").get(val[1]));
+                                if (baseView!=null)
+                                        baseView.bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
                         case "hid":
                             ((BaseView) contextImp.getContainer("view").get(val[1])).view.setVisibility(View.GONE);
                             break;
                         case "clear":
-                            View view1 = ((BaseView) contextImp.getContainer("view").get(val[1])).view;
-                            if (view1 instanceof MRecyclerView) {
-                                ((BaseQuickAdapter) ((MRecyclerView) view1).getAdapter()).getData().clear();
-                            } else if (view1 instanceof Banner) {
-                                ((Banner) view1).getAdapter().setDatas(new ArrayList());
+                            BaseView baseView = ((BaseView) contextImp.getContainer("view").get(val[1]));
+                            if (baseView!=null) {
+                                View view1 = baseView.view;
+                                if (view1 instanceof MRecyclerView) {
+                                    ((BaseQuickAdapter) ((MRecyclerView) view1).getAdapter()).getData().clear();
+                                } else if (view1 instanceof Banner) {
+                                    ((Banner) view1).getAdapter().setDatas(new ArrayList());
+                                }
                             }
                             break;
                         default:
