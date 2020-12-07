@@ -107,7 +107,20 @@ public class LabelView extends BaseView<TextView> {
                         if (TextUtils.isEmpty(val)) {
                             view.setText("");
                         } else {
-                            view.setText(Html.fromHtml(val));
+                            double num ;
+                            try {
+                                num = Double.parseDouble(val);
+                                if (num % 1 == 0) {
+                                    view.setText(String.valueOf((int) num));
+                                } else {
+                                    view.setText(String.valueOf(num));
+                                }
+
+                            } catch (Exception e) {
+                                view.setText(Html.fromHtml(val));
+                            }
+
+
                         }
                         break;
                     case "fontSize":
@@ -117,7 +130,7 @@ public class LabelView extends BaseView<TextView> {
                         break;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

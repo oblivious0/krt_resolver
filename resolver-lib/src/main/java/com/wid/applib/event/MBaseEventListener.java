@@ -98,7 +98,9 @@ public abstract class MBaseEventListener implements ViewEventImp {
         }
 
         for (EventBean eventBean : eventBeans) {
-
+            if ("c67a44a5b9d6037".equals(eventBean.getCid())){
+                LogUtils.e("");
+            }
             EventBean eventBean1 = CloneUtils.deepClone(eventBean, EventBean.class);
             if (eventBean1.isUrlFromApi()) {
                 // data%krt_Array%krt_linkUrl

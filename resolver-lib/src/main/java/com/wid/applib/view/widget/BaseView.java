@@ -121,13 +121,7 @@ public abstract class BaseView<T extends View> {
      * 绑定组件事件：当terminal默认为所有端都需要执行的事件
      */
     private void bindEvent() {
-
-        if(cid.equals("000600140089")){
-            LogUtils.e("");
-        }
-
         if (bean.getEvent() != null) {
-            view.setClickable(false);
             if (bean.getEvent().size() != 0) {
                 List<EventBean> events = new ArrayList<>();
                 for (int z = 0; z < bean.getEvent().size(); z++) {
@@ -138,6 +132,9 @@ public abstract class BaseView<T extends View> {
                     if (bean.getEvent().get(z).getTerminal().contains(MLib.TERMINAL)) {
                         events.add(bean.getEvent().get(z));
                     }
+                }
+                if(cid.equals("mnuivn9ij4")){
+                    LogUtils.e("");
                 }
                 EventBindUtil.bindClick(view, contextImp.getOnClickTool(), events);
             } else {

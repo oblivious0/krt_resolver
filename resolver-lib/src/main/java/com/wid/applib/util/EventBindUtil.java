@@ -4,6 +4,7 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wid.applib.bean.EventBean;
 import com.wid.applib.event.ViewEventImp;
@@ -32,31 +33,20 @@ public class EventBindUtil {
             final RecyclerView recyclerView = (RecyclerView) view;
             BaseQuickAdapter adapter = (BaseQuickAdapter) recyclerView.getAdapter();
             if (adapter != null) {
-                adapter.setOnItemClickListener(new OnMultiItemClickListener() {
-                    @Override
-                    public void onMultiClick(BaseQuickAdapter adapter, View view, int position) {
-                        eventListener.onDataListClick(recyclerView, eventBeans, position);
-                    }
-                });
+                adapter.setOnItemClickListener((adapter1, view1, position) ->
+                        eventListener.onDataListClick(recyclerView, eventBeans, position));
+                recyclerView.setAdapter(adapter);
             }
         } else if (view instanceof Banner) {
             final Banner banner = (Banner) view;
             BannerAdapter adapter = banner.getAdapter();
             if (adapter != null) {
-                adapter.setOnBannerListener(new OnBannerListener() {
-                    @Override
-                    public void OnBannerClick(Object data, int position) {
-                        eventListener.onDataListClick(banner, eventBeans, position);
-                    }
-                });
+                adapter.setOnBannerListener((data, position) ->
+                        eventListener.onDataListClick(banner, eventBeans, position));
             }
-        }else{
-            view.setOnClickListener(new OnMultiClickListener() {
-                @Override
-                public void onMultiClick(View v) {
-                    eventListener.onViewClick(v, eventBeans);
-                }
-            });
+        } else {
+            view.setOnClickListener(view12 ->
+                    eventListener.onViewClick(view12, eventBeans));
         }
     }
 

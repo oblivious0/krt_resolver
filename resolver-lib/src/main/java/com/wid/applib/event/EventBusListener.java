@@ -59,7 +59,6 @@ public class EventBusListener {
                 for (ActionBean actionBean : bean.getList()) {
                     String[] cell = actionBean.getTarget().split("%krt_");
                     String[] val = cell[cell.length - 1].split("%krt%");
-
                     switch (actionBean.getType()) {
                         case "attr":
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
