@@ -1,17 +1,22 @@
 package com.wid.applib.view.widget;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -34,10 +39,13 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.SimplePagerTitleView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import krt.wid.util.MGlideUtil;
 
 /**
  * author: MaGua
@@ -72,6 +80,9 @@ public class TabTitleView extends BaseView<LinearLayout> {
         view.setLayoutParams(lp);
         LinearLayout.LayoutParams indicatorlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, Util.getRealValue(bean.getStyle().getTabHeight()));
         magicIndicator = new MagicIndicator(contextImp.getContext());
+        if(bean.getStyle().isCenter()) {
+            indicatorlp.gravity = Gravity.CENTER_HORIZONTAL;
+        }
         magicIndicator.setLayoutParams(indicatorlp);
         viewPager = new SViewPager(contextImp.getContext());
         LinearLayout.LayoutParams viewpagerlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -102,29 +113,37 @@ public class TabTitleView extends BaseView<LinearLayout> {
 
             @Override
             public IPagerTitleView getTitleView(Context context, final int i) {
-                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-                simplePagerTitleView.setText(mTitles.get(i));
-                simplePagerTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.text_14));
-                simplePagerTitleView.setGravity(Gravity.CENTER);
-                simplePagerTitleView.setNormalColor(Util.getRealColor(bean.getStyle().getTextColor()));
-                simplePagerTitleView.setSelectedColor(Util.getRealColor(bean.getStyle().getSelectTextColor()));
-                simplePagerTitleView.setOnClickListener(v -> {
-                    viewPager.setCurrentItem(i);
-                });
-                return simplePagerTitleView;
+                if(bean.getStyle().getIndicatorImg()==null) {
+                    SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
+                    simplePagerTitleView.setText(mTitles.get(i));
+                    simplePagerTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.text_14));
+                    simplePagerTitleView.setGravity(Gravity.CENTER);
+                    simplePagerTitleView.setNormalColor(Util.getRealColor(bean.getStyle().getTextColor()));
+                    simplePagerTitleView.setSelectedColor(Util.getRealColor(bean.getStyle().getSelectTextColor()));
+                    simplePagerTitleView.setOnClickListener(v -> {
+                        viewPager.setCurrentItem(i);
+                    });
+                    return simplePagerTitleView;
+                }else{
+                    return showIndicatorImg( context,i);
+                }
             }
 
             @Override
             public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
-                indicator.setLineHeight(UIUtil.dip2px(context, 3));
-                indicator.setLineWidth(UIUtil.dip2px(context, 50));
-                indicator.setRoundRadius(UIUtil.dip2px(context, 3));
-                indicator.setStartInterpolator(new AccelerateInterpolator());
-                indicator.setEndInterpolator(new DecelerateInterpolator(2.0f));
-                indicator.setColors(Util.getRealColor(bean.getStyle().getIndicatorColor()));
-                return indicator;
+                if(bean.getStyle().getIndicatorImg()==null) {
+                    LinePagerIndicator indicator = new LinePagerIndicator(context);
+                    indicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
+                    indicator.setLineHeight(UIUtil.dip2px(context, 3));
+                    indicator.setLineWidth(UIUtil.dip2px(context, 50));
+                    indicator.setRoundRadius(UIUtil.dip2px(context, 3));
+                    indicator.setStartInterpolator(new AccelerateInterpolator());
+                    indicator.setEndInterpolator(new DecelerateInterpolator(2.0f));
+                    indicator.setColors(Util.getRealColor(bean.getStyle().getIndicatorColor()));
+                    return indicator;
+                }else{
+                    return null;
+                }
             }
         });
         magicIndicator.setNavigator(commonNavigator);
@@ -132,6 +151,60 @@ public class TabTitleView extends BaseView<LinearLayout> {
         view.addView(magicIndicator);
         view.addView(viewPager);
         ViewPagerHelper.bind(magicIndicator, viewPager);
+    }
+
+    public CommonPagerTitleView showIndicatorImg(Context context, final int i){
+        CommonPagerTitleView commonPagerTitleView = new CommonPagerTitleView(contextImp.getContext());
+        commonPagerTitleView.setPadding(30, 0, 30, 0);
+
+        // load custom layout
+        View customLayout = LayoutInflater.from(contextImp.getContext()).inflate(R.layout.title_viewpage, null);
+        final TextView name = customLayout.findViewById(R.id.name);
+        final ImageView line = customLayout.findViewById(R.id.line);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(bean.getStyle().getTabItemWidth(), bean.getStyle().getTabHeight());
+        customLayout.setLayoutParams(lp);
+        name.setText(mTitles.get(i));
+        name.setTextSize(TypedValue.COMPLEX_UNIT_PX, Util.getRealValue(bean.getStyle().getTextFont()));
+        line.setLayoutParams(new LinearLayout.LayoutParams(bean.getStyle().getIndicatorWidth(),bean.getStyle().getIndicatorHeight()));
+        line.setScaleType(ImageView.ScaleType.FIT_XY);
+        MGlideUtil.load(contextImp.getContext(), bean.getStyle().getIndicatorImg(), line);
+        commonPagerTitleView.setContentView(customLayout);
+        commonPagerTitleView.setOnPagerTitleChangeListener(new CommonPagerTitleView.OnPagerTitleChangeListener() {
+            @Override
+            public void onSelected(int index, int totalCount) {
+
+            }
+
+            @Override
+            public void onDeselected(int index, int totalCount) {
+
+            }
+
+            @Override
+            public void onLeave(int index, int totalCount, float leavePercent, boolean leftToRight) {
+                name.setTextColor(Util.getRealColor(bean.getStyle().getTextColor()));
+                name.setTextSize(TypedValue.COMPLEX_UNIT_PX, Util.getRealValue(bean.getStyle().getTextFont()));
+                line.setVisibility(View.INVISIBLE);
+
+            }
+
+            @Override
+            public void onEnter(int index, int totalCount, float enterPercent, boolean leftToRight) {
+                name.setTextColor(Util.getRealColor(bean.getStyle().getSelectTextColor()));
+                name.setTextSize(TypedValue.COMPLEX_UNIT_PX, Util.getRealValue(bean.getStyle().getSelectTextFont()));
+                line.setVisibility(View.VISIBLE);
+
+            }
+        });
+        commonPagerTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(i);
+            }
+        });
+
+
+        return commonPagerTitleView;
     }
 
     @Override

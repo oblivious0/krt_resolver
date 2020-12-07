@@ -80,6 +80,15 @@ public class StyleBean {
     private String backIconParam;
     private String mode = "";
     private boolean isCenter = false;
+    private String indicatorImg;
+
+    public String getIndicatorImg() {
+        return indicatorImg;
+    }
+
+    public void setIndicatorImg(String indicatorImg) {
+        this.indicatorImg = indicatorImg;
+    }
 
     public boolean isCenter() {
         return isCenter;
