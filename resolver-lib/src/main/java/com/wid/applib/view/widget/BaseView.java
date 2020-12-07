@@ -73,7 +73,11 @@ public abstract class BaseView<T extends View> {
     @SuppressLint("CheckResult")
     private void generate() {
         cid = bean.getCid();
-        initView();
+        try {
+            initView();
+        } catch (Exception e) {
+            LogUtils.e(cid + " widget init err !");
+        }
 
         view.post(() -> Observable.just(bean)
                 .subscribeOn(Schedulers.io())
@@ -132,9 +136,6 @@ public abstract class BaseView<T extends View> {
                     if (bean.getEvent().get(z).getTerminal().contains(MLib.TERMINAL)) {
                         events.add(bean.getEvent().get(z));
                     }
-                }
-                if(cid.equals("mnuivn9ij4")){
-                    LogUtils.e("");
                 }
                 EventBindUtil.bindClick(view, contextImp.getOnClickTool(), events);
             } else {

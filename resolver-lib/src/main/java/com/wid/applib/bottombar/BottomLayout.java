@@ -17,9 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
-
-import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.MLib;
 import com.wid.applib.R;
 import com.wid.applib.base.BaseModuleFragment;
