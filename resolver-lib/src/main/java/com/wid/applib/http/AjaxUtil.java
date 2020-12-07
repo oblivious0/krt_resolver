@@ -111,8 +111,9 @@ public class AjaxUtil {
                                 String cid = str1[1];
                                 String[] bindK = bindDataBean.getBindKey().split("%krt_");
                                 if (bindK[0].equals("data")) {
-                                    ((BaseView) contextImp.getContainer("view").get(cid))
-                                            .bindData(cid, pro, ParseJsonUtil.getStringByKey(data, bindK[1]));
+                                    BaseView baseView = ((BaseView) contextImp.getContainer("view").get(cid));
+                                    if (baseView != null)
+                                        baseView.bindData(cid, pro, ParseJsonUtil.getStringByKey(data, bindK[1]));
                                 }
                             }
                         }
