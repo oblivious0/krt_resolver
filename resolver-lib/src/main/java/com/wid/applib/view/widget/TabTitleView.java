@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bottombar.SViewPager;
@@ -113,7 +114,7 @@ public class TabTitleView extends BaseView<LinearLayout> {
 
             @Override
             public IPagerTitleView getTitleView(Context context, final int i) {
-                if(bean.getStyle().getIndicatorImg()==null) {
+//                if(bean.getStyle().getIndicatorImg()==null) {
                     SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                     simplePagerTitleView.setText(mTitles.get(i));
                     simplePagerTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.text_14));
@@ -124,9 +125,9 @@ public class TabTitleView extends BaseView<LinearLayout> {
                         viewPager.setCurrentItem(i);
                     });
                     return simplePagerTitleView;
-                }else{
-                    return showIndicatorImg( context,i);
-                }
+//                }else{
+//                    return showIndicatorImg( context,i);
+//                }
             }
 
             @Override
@@ -167,6 +168,7 @@ public class TabTitleView extends BaseView<LinearLayout> {
         name.setTextSize(TypedValue.COMPLEX_UNIT_PX, Util.getRealValue(bean.getStyle().getTextFont()));
         line.setLayoutParams(new LinearLayout.LayoutParams(bean.getStyle().getIndicatorWidth(),bean.getStyle().getIndicatorHeight()));
         line.setScaleType(ImageView.ScaleType.FIT_XY);
+        LogUtils.e(line.getParent(),line.getLayoutParams());
         MGlideUtil.load(contextImp.getContext(), bean.getStyle().getIndicatorImg(), line);
         commonPagerTitleView.setContentView(customLayout);
         commonPagerTitleView.setOnPagerTitleChangeListener(new CommonPagerTitleView.OnPagerTitleChangeListener() {
