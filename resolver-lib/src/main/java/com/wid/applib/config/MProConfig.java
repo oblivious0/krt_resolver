@@ -33,6 +33,7 @@ public class MProConfig {
     public static String btx_json_name;
     private String krt_pro_code;
     private String is_publish;
+    private String current_development;
 
     public static class Builder {
         private String krtCode = "";
@@ -86,5 +87,13 @@ public class MProConfig {
 
     public String getIs_publish() {
         return is_publish;
+    }
+
+    public String getCurrent_development() {
+        return current_development;
+    }
+
+    public void setCurrent_development(String current_development) {
+        this.current_development = current_development;
     }
 }

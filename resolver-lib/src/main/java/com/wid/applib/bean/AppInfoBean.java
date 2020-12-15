@@ -27,6 +27,7 @@ public class AppInfoBean {
     private String startPageId;
     private List<BasePathBean> basePath;
     private int defaultPath;
+    private int development;
 
     public String getStartType() {
         return startType;

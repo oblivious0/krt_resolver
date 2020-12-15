@@ -2,6 +2,7 @@ package com.wid.applib.http;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -10,10 +11,12 @@ import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
+import com.wid.applib.MLib;
 import com.wid.applib.bean.AjaxBean;
 import com.wid.applib.bean.BindDataBean;
 import com.wid.applib.bean.ParamBean;
 import com.wid.applib.bean.TransferKeyBean;
+import com.wid.applib.config.MProConfig;
 import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
@@ -38,27 +41,48 @@ public class AjaxUtil {
     public static Request assembleRequest(AjaxBean bean, ContextImp contextImp) {
         if (bean == null) return null;
         Request request;
+
+        String url = "";
+        switch (MProConfig.getInstance().getIs_publish()) {
+            case MLib.VER_TEST:
+            case MLib.VER_ALPHA:
+            case MLib.VER_BETA:
+                url = AppLibManager.getBetaPath(bean.getBasePathIdx());
+                break;
+            case MLib.VER_OFFICIAL:
+            case MLib.VER_HISTORY:
+                url = AppLibManager.getBasePath(bean.getBasePathIdx());
+                break;
+            default:
+                break;
+        }
+
         if (bean.getMethod().equals("POST")) {
-            request = OkGo.<Result>post(AppLibManager.getBasePath(bean.getBasePathIdx()) + bean.getUrl());
+            request = OkGo.<MResult>post(url + bean.getUrl());
         } else if (bean.getMethod().equals("GET")) {
-            request = OkGo.<Result>get(AppLibManager.getBasePath(bean.getBasePathIdx()) + bean.getUrl());
+            request = OkGo.<MResult>get(url + bean.getUrl());
         } else {
-            LogUtils.e("Request type err!");
+            Log.w(MLib.TAG, "http request type err !");
             return null;
         }
         HttpParams params = new HttpParams();
         for (ParamBean bodyParam : bean.getData()) {
-            if ("props".equals(bodyParam.getSource()) || "variable".equals(bodyParam.getSource())) {
+            switch (bodyParam.getSource()) {
+                case "prop":
+                case "variable":
+                    Object val = contextImp.getContainer("element")
+                            .get(bodyParam.getVal());
+                    params.put(bodyParam.getKey(), val == null ? "" : val.toString());
+                    break;
 
-                Object val = contextImp.getContainer("element")
-                        .get(bodyParam.getVal());
-                params.put(bodyParam.getKey(), val == null ? "" : val.toString());
-            } else if ("storage".equals(bodyParam.getSource())) {
-                Object val = AppLibManager.getStorageVal(bodyParam.getVal(), contextImp.getContext());
-                params.put(bodyParam.getKey(), val == null ? "" : val.toString());
-            } else {
-                //static
-                params.put(bodyParam.getKey(), bodyParam.getVal());
+                case "storage":
+                    Object val1 = AppLibManager.getStorageVal(bodyParam.getVal(), contextImp.getContext());
+                    params.put(bodyParam.getKey(), val1 == null ? "" : val1.toString());
+                    break;
+
+                default:
+                    params.put(bodyParam.getKey(), bodyParam.getVal());
+                    break;
             }
 
             if (bodyParam.isFromBroad()) {
@@ -67,7 +91,7 @@ public class AjaxUtil {
                 params.put(bodyParam.getKey(), val == null ? bodyParam.getVal() : val.toString());
             }
         }
-        for (ParamBean headerParam : bean.getData()) {
+        for (ParamBean headerParam : bean.getHeaders()) {
             request.headers(headerParam.getKey(), headerParam.getVal());
         }
         request.headers("Authorization", contextImp.getAuthorization());
@@ -82,9 +106,9 @@ public class AjaxUtil {
             if (contextImp.getContainer("callback").containsKey(bean.getCid())) {
                 request.execute((Callback) contextImp.getContainer("callback").get(bean.getCid()));
             } else {
-                request.execute(new MCallBack<Result>((Activity) contextImp.getContext(), false) {
+                request.execute(new MCallBack<MResult>((Activity) contextImp.getContext(), false) {
                     @Override
-                    public void onSuccess(Response<Result> response) {
+                    public void onSuccess(Response<MResult> response) {
                         if (response.body().isSuccess()) {
                             String data = response.body().data.toString();
                             if (bean.getTransferKey() != null)
@@ -120,9 +144,9 @@ public class AjaxUtil {
                     }
 
                     @Override
-                    public Result convertResponse(okhttp3.Response response) throws Throwable {
-                        MJsonConvert<Result> convert = new MJsonConvert<>(Result.class);
-                        Result result = convert.convertResponse(response);
+                    public MResult convertResponse(okhttp3.Response response) throws Throwable {
+                        MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
+                        MResult result = convert.convertResponse(response);
                         if (result != null) {
                             if (!result.isSuccess()) {
                                 EventBus.getDefault().post(new MEventBean(MConstants.ACTION_RESULT_CODE, result.code));

@@ -18,6 +18,7 @@ import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bean.ParamBean;
 import com.wid.applib.http.MJsonConvert;
+import com.wid.applib.http.MResult;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.util.BindDataUtil;
@@ -84,9 +85,9 @@ public class ListDataView extends BaseView<MRecyclerView> {
         try {
             if (list == null) {
 
-                MCallBack callBack = new MCallBack<Result>((Activity) contextImp.getContext(), false) {
+                MCallBack callBack = new MCallBack<MResult>((Activity) contextImp.getContext(), false) {
                     @Override
-                    public void onSuccess(Response<Result> response) {
+                    public void onSuccess(Response<MResult> response) {
                         if (response.body().isSuccess()) {
 
                             list = ParseJsonUtil.getBeanList(
@@ -96,8 +97,8 @@ public class ListDataView extends BaseView<MRecyclerView> {
                     }
 
                     @Override
-                    public Result convertResponse(okhttp3.Response response) throws Throwable {
-                        MJsonConvert<Result> convert = new MJsonConvert<>(Result.class);
+                    public MResult convertResponse(okhttp3.Response response) throws Throwable {
+                        MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
                         return convert.convertResponse(response);
                     }
                 };
@@ -109,10 +110,7 @@ public class ListDataView extends BaseView<MRecyclerView> {
 
                 Request request = AjaxUtil.assembleRequest(bean.getAjax().get(0), contextImp);
                 if (!TextUtils.isEmpty(bean.getAjax().get(0).getSizeField())) {
-                    SwipeRefreshLayout swipeRefreshLayout = null;
-                    if (contextImp.getContext() instanceof ContextImp) {
-                        swipeRefreshLayout = ((ContextImp) contextImp.getContext()).getSwipeRefreshLayout();
-                    }
+                    SwipeRefreshLayout  swipeRefreshLayout = ((ContextImp) contextImp.getContext()).getSwipeRefreshLayout();
                     view.setSwipeRefreshLayout(swipeRefreshLayout);
                     view.setPageTurning(true, getVal(bean.getAjax().get(0).getSizeField(),
                             bean.getAjax().get(0).getData()));

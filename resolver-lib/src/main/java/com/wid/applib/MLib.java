@@ -26,6 +26,10 @@ public class MLib {
     /**
      * 测试版
      */
+    public final static String VER_TEST = "-1";
+    /**
+     * 开发版
+     */
     public final static String VER_ALPHA = "0";
     /**
      * 体验版
@@ -40,5 +44,13 @@ public class MLib {
      */
     public final static String VER_HISTORY = "3";
 
+    /**
+     * app启动运行环境（正式地址环境）
+     */
+    public final static String DEVELOPMENT_PROD = "prod";
 
+    /**
+     * app启动运行环境（测式地址环境）
+     */
+    public final static String DEVELOPMENT_DEV = "dev";
 }

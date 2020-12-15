@@ -173,6 +173,7 @@ public class InitLoadActivity extends BaseInitLoadActivity {
             AppLibManager.defaultPath = appInfoBean.getDefaultPath();
             for (AppInfoBean.BasePathBean basePathBean : appInfoBean.getBasePath()) {
                 AppLibManager.putBasePath(basePathBean.getProd());
+                AppLibManager.putBetaPath(basePathBean.getDev());
             }
         }
 

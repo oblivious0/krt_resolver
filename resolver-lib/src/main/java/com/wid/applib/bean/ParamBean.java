@@ -19,7 +19,7 @@ public class ParamBean {
     private boolean fromProps;
 //    private boolean ifChange;
 
-    private String source;
+    private String source = "";
     private boolean fromBroad;
     private String broadId;
     private String broadKey;

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lzy.okgo.model.Response;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.http.MJsonConvert;
+import com.wid.applib.http.MResult;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.util.BindDataUtil;
@@ -74,9 +75,9 @@ public class BannerView extends BaseView<Banner> {
                 .start();
 
         if (list == null) {
-            MCallBack callBack = new MCallBack<Result>((Activity) contextImp.getContext(), false) {
+            MCallBack callBack = new MCallBack<MResult>((Activity) contextImp.getContext(), false) {
                 @Override
-                public void onSuccess(Response<Result> response) {
+                public void onSuccess(Response<MResult> response) {
                     if (response.body().code == 200) {
                         list = ParseJsonUtil.getBeanList(
                                 ParseJsonUtil.toJson(response.body().data), Object.class);
@@ -86,9 +87,9 @@ public class BannerView extends BaseView<Banner> {
                 }
 
                 @Override
-                public Result convertResponse(okhttp3.Response response) throws Throwable {
-                    MJsonConvert<Result> convert = new MJsonConvert<>(Result.class);
-                    Result result = convert.convertResponse(response);
+                public MResult convertResponse(okhttp3.Response response) throws Throwable {
+                    MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
+                    MResult result = convert.convertResponse(response);
                     if (result != null) {
                         if (!result.isSuccess()) {
                             EventBus.getDefault().post(new MEventBean(MConstants.ACTION_RESULT_CODE, result.code));

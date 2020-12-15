@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
 import com.wid.applib.http.MJsonConvert;
+import com.wid.applib.http.MResult;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -93,9 +94,9 @@ public class MRecyclerView extends RecyclerView {
     public void start() {
         if (request != null) {
             request.params(pageField, page)
-                    .execute(new MCallBack<Result>(mContext, isPageTurning) {
+                    .execute(new MCallBack<MResult>(mContext, isPageTurning) {
                         @Override
-                        public void onSuccess(Response<Result> response) {
+                        public void onSuccess(Response<MResult> response) {
                             if (response.body().isSuccess()) {
                                 List<Object> list = ParseJsonUtil.getBeanList(
                                         ParseJsonUtil.toJson(response.body().data), Object.class);
@@ -107,11 +108,18 @@ public class MRecyclerView extends RecyclerView {
                                     mAdapter.loadMoreComplete();
                                 }
 
-                                if (list.size() < size) {
-                                    mAdapter.loadMoreEnd();
-                                } else {
-                                    mAdapter.setEnableLoadMore(true);
-
+                                if (response.body().totalPage==-1) {
+                                    if (list.size() < size) {
+                                        mAdapter.loadMoreEnd();
+                                    } else {
+                                        mAdapter.setEnableLoadMore(true);
+                                    }
+                                }else{
+                                    if (page==response.body().totalPage){
+                                        mAdapter.loadMoreEnd();
+                                    }else{
+                                        mAdapter.setEnableLoadMore(true);
+                                    }
                                 }
 
                                 if (swipeRefreshLayout.isRefreshing()) {
@@ -122,9 +130,9 @@ public class MRecyclerView extends RecyclerView {
                         }
 
                         @Override
-                        public Result convertResponse(okhttp3.Response response) throws Throwable {
-                            MJsonConvert<Result> convert = new MJsonConvert<>(Result.class);
-                            Result result = convert.convertResponse(response);
+                        public MResult convertResponse(okhttp3.Response response) throws Throwable {
+                            MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
+                            MResult result = convert.convertResponse(response);
                             if (result!=null){
                                 if (!result.isSuccess()){
                                     EventBus.getDefault().post(new MEventBean(MConstants.ACTION_RESULT_CODE, result.code));

@@ -11,6 +11,10 @@ public class MVersionBean {
 
     VersionInfoBean last_version;
     VersionInfoBean interpreter_last_version;
+
+    /**
+     * getLastVersion2 接口不返回下面两个字段
+     */
     List<VersionInfoBean> enable_version;
     List<VersionInfoBean> interpreter_enable_version;
 
@@ -50,13 +54,14 @@ public class MVersionBean {
         private String version;
         private String interpreter_code;
         private String publish_time;
-        private String base_skin;
-        private String custom_skin;
+        private String base_skin;   //主题皮肤文件
+        private String custom_skin; //其他皮肤文件
 
         /* -- 2版本解析器追加 -- */
-        //发布状态：0测试版，1体验版，2发布版，3历史发布版
+        //发布状态：-1测试版，0开发版，1体验版，2发布版，3历史发布版
         private String is_publish;
 
+        /* -- appinfo的jsonStr,通过json解析获取appinfo实体类 -- */
         private String app_info = "";
         /*
          *{

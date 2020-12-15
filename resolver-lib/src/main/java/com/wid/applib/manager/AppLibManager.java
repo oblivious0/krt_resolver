@@ -20,6 +20,7 @@ import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.SpUtil;
 import com.wid.applib.view.widget.BaseView;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ public class AppLibManager {
     public static int defaultPath = 0;
 
     private static List<String> basePaths = new ArrayList<>();
+    private static List<String> baseBetaPaths = new ArrayList<>();
 
     private static HashMap<String, ContextImp> moduleStack = new HashMap<>();
 
@@ -64,6 +66,24 @@ public class AppLibManager {
         if (basePaths.contains(url)) return false;
 
         basePaths.add(url);
+        return true;
+    }
+
+    public static String getBetaPath(int index) {
+        try {
+            if (index == 99)
+                return baseBetaPaths.get(defaultPath);
+
+            return baseBetaPaths.get(index);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static boolean putBetaPath(String url) {
+        if (baseBetaPaths.contains(url)) return false;
+
+        baseBetaPaths.add(url);
         return true;
     }
 

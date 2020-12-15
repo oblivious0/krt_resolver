@@ -99,7 +99,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
         if (resourceNameView() != null)
             resourceNameView().setText("版本信息获取中...");
 
-        OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion"))
+        OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion2"))
                 .params("tag", MProConfig.getInstance().getKrt_pro_code())
                 .params("terminalCode", TERMINAL)
                 .params("terminalVersion", TERMINAL_VERSION)
@@ -150,6 +150,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             AppLibManager.defaultPath = appInfoBean.getDefaultPath();
             for (AppInfoBean.BasePathBean basePathBean : appInfoBean.getBasePath()) {
                 AppLibManager.putBasePath(basePathBean.getProd());
+                AppLibManager.putBetaPath(basePathBean.getDev());
             }
             MProConfig.btx_json_name = appInfoBean.getStartPageId();
         }
