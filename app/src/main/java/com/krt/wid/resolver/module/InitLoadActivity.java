@@ -176,35 +176,16 @@ public class InitLoadActivity extends BaseInitLoadActivity {
             }
         }
 
-        if (
+        if (resourceNameView() != null)
+            resourceNameView().setText("界面清单获取中...");
 
-                resourceNameView() != null)
-
-            resourceNameView().
-
-                    setText("界面清单获取中...");
-
-        OkGo.<Result<List<MPageInfoBean>>>
-
-                get(Constants.getUrl("getPageList"))
-                .
-
-                        params("withConfig", 1)
-                .
-
-                        params("pageSize", 100)
-                .
-
-                        params("tag", krtCode)
-                .
-
-                        params("currentPage", 0)
-                .
-
-                        params("version", krtVer)
-                .
-
-                        execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
+        OkGo.<Result<List<MPageInfoBean>>>get(Constants.getUrl("getPageList"))
+                .params("withConfig", 1)
+                .params("pageSize", 100)
+                .params("tag", krtCode)
+                .params("currentPage", 0)
+                .params("version", krtVer)
+                .execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
                             @Override
                             public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
                                 if (response.body().isSuccess()) {
