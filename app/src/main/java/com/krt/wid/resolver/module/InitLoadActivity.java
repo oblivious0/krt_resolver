@@ -145,22 +145,22 @@ public class InitLoadActivity extends BaseInitLoadActivity {
     @Override
     protected void checkRes() {
 
-        for (MVersionBean.VersionInfoBean bean : mVersionBean.getEnable_version()) {
-            if (krtVer.equals(bean.getVersion())) {
-                appInfoBean = ParseJsonUtil.getBean(bean.getApp_info(), AppInfoBean.class);
-                mDownloads.add(bean.getBase_skin());
-                mDownloads.add(bean.getCustom_skin());
-                versionInfoBean = bean;
+//        for ( : mVersionBean.getInterpreter_last_version()) {
+        versionInfoBean = mVersionBean.getInterpreter_last_version();
+        if (krtVer.equals(versionInfoBean.getVersion())) {
+            appInfoBean = ParseJsonUtil.getBean(versionInfoBean.getApp_info(), AppInfoBean.class);
+            mDownloads.add(versionInfoBean.getBase_skin());
+            mDownloads.add(versionInfoBean.getCustom_skin());
 
-                MProConfig.build()
-                        .setKrtCode(krtCode)
-                        .setFragmentClz(BaseFragment.class)
-                        .setIsPublish(versionInfoBean.getIs_publish())
-                        .generate();
-                MProConfig.btx_json_name = appInfoBean.getStartPageId();
-                break;
-            }
+            MProConfig.build()
+                    .setKrtCode(krtCode)
+                    .setFragmentClz(BaseFragment.class)
+                    .setIsPublish(versionInfoBean.getIs_publish())
+                    .generate();
+            MProConfig.btx_json_name = appInfoBean.getStartPageId();
+//                break;
         }
+
 
         if (versionInfoBean == null) {
             MToast.showToast(this, "未检测到可用版本");
@@ -176,38 +176,57 @@ public class InitLoadActivity extends BaseInitLoadActivity {
             }
         }
 
-        if (resourceNameView() != null)
-            resourceNameView().setText("界面清单获取中...");
+        if (
 
-        OkGo.<Result<List<MPageInfoBean>>>get(Constants.getUrl("getPageList"))
-                .params("withConfig", 1)
-                .params("pageSize", 100)
-                .params("tag", krtCode)
-                .params("currentPage", 0)
-                .params("version", krtVer)
-                .execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
-                    @Override
-                    public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
-                        if (response.body().isSuccess()) {
-                            List<MPageInfoBean> list = response.body().data;
-                            for (MPageInfoBean bean : list) {
-                                md5CodeMap.put(bean.getPage_config_md5(), bean);
+                resourceNameView() != null)
+
+            resourceNameView().
+
+                    setText("界面清单获取中...");
+
+        OkGo.<Result<List<MPageInfoBean>>>
+
+                get(Constants.getUrl("getPageList"))
+                .
+
+                        params("withConfig", 1)
+                .
+
+                        params("pageSize", 100)
+                .
+
+                        params("tag", krtCode)
+                .
+
+                        params("currentPage", 0)
+                .
+
+                        params("version", krtVer)
+                .
+
+                        execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
+                            @Override
+                            public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
+                                if (response.body().isSuccess()) {
+                                    List<MPageInfoBean> list = response.body().data;
+                                    for (MPageInfoBean bean : list) {
+                                        md5CodeMap.put(bean.getPage_config_md5(), bean);
+                                    }
+                                    loadResList();
+                                } else {
+                                    if (resourceNameView() != null)
+                                        resourceNameView().setText("界面清单获取失败");
+
+                                    gotoMainActivity();
+                                }
                             }
-                            loadResList();
-                        } else {
-                            if (resourceNameView() != null)
-                                resourceNameView().setText("界面清单获取失败");
 
-                            gotoMainActivity();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response<Result<List<MPageInfoBean>>> response) {
-                        super.onError(response);
-                        gotoMainActivity();
-                    }
-                });
+                            @Override
+                            public void onError(Response<Result<List<MPageInfoBean>>> response) {
+                                super.onError(response);
+                                gotoMainActivity();
+                            }
+                        });
 
     }
 
