@@ -2,6 +2,7 @@ package com.wid.applib.base;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,7 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
     private boolean isInitView = false;
 
     private String jsonFile;
+    private String pageType = "";
     private AppLibManager manager;
 
     public BaseModuleFragment setJsonFile(String name) {
@@ -275,5 +277,15 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
             default:
                 return null;
         }
+    }
+
+    @Override
+    public String getPageType() {
+        return pageType;
+    }
+
+    @Override
+    public void setPageType(String pageType) {
+        this.pageType = pageType==null?"":pageType;
     }
 }

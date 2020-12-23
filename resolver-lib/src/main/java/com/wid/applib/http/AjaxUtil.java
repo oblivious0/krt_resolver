@@ -5,11 +5,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.LogUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.base.Request;
 import com.wid.applib.MLib;
 import com.wid.applib.bean.AjaxBean;
@@ -38,6 +40,9 @@ import krt.wid.util.ParseJsonUtil;
  */
 public class AjaxUtil {
 
+    private static final int PARAM_TYPE_URL_ENCODE = 0;
+    private static final int PARAM_TYPE_JSON = 1;
+
     public static Request assembleRequest(AjaxBean bean, ContextImp contextImp) {
         if (bean == null) return null;
         Request request;
@@ -65,23 +70,52 @@ public class AjaxUtil {
             Log.w(MLib.TAG, "http request type err !");
             return null;
         }
+
+        int type = 0;
+
+        for (ParamBean headerParam : bean.getHeaders()) {
+            request.headers(headerParam.getKey(), headerParam.getVal());
+
+            if (headerParam.getKey().equals("Content-Type") &&
+                    headerParam.getVal().equals("application/json;charset=utf-8")) {
+                type = PARAM_TYPE_JSON;
+            }
+        }
+
         HttpParams params = new HttpParams();
+        JSONObject jsonObject = null;
+        if (type == PARAM_TYPE_JSON) {
+            jsonObject = new JSONObject();
+        }
+
         for (ParamBean bodyParam : bean.getData()) {
             switch (bodyParam.getSource()) {
-                case "prop":
+                case "props":
                 case "variable":
                     Object val = contextImp.getContainer("element")
                             .get(bodyParam.getVal());
-                    params.put(bodyParam.getKey(), val == null ? "" : val.toString());
+                    if (jsonObject != null) {
+                        jsonObject.put(bodyParam.getKey(), val == null ? "" : val.toString());
+                    } else {
+                        params.put(bodyParam.getKey(), val == null ? "" : val.toString());
+                    }
                     break;
 
                 case "storage":
                     Object val1 = AppLibManager.getStorageVal(bodyParam.getVal(), contextImp.getContext());
-                    params.put(bodyParam.getKey(), val1 == null ? "" : val1.toString());
+                    if (jsonObject != null) {
+                        jsonObject.put(bodyParam.getKey(), val1 == null ? "" : val1.toString());
+                    } else {
+                        params.put(bodyParam.getKey(), val1 == null ? "" : val1.toString());
+                    }
                     break;
 
                 default:
-                    params.put(bodyParam.getKey(), bodyParam.getVal());
+                    if (jsonObject != null) {
+                        jsonObject.put(bodyParam.getKey(), bodyParam.getVal());
+                    } else {
+                        params.put(bodyParam.getKey(), bodyParam.getVal());
+                    }
                     break;
             }
 
@@ -91,10 +125,19 @@ public class AjaxUtil {
                 params.put(bodyParam.getKey(), val == null ? bodyParam.getVal() : val.toString());
             }
         }
-        for (ParamBean headerParam : bean.getHeaders()) {
-            request.headers(headerParam.getKey(), headerParam.getVal());
+
+        String[] token = contextImp.getAuthorization();
+        if (token != null && token.length == 2) {
+            request.headers(token[0], token[1]);
         }
-        request.headers("Authorization", contextImp.getAuthorization());
+
+        if (jsonObject != null) {
+            if (request instanceof PostRequest) {
+                PostRequest<MResult> resultPostRequest = (PostRequest<MResult>) request;
+                resultPostRequest.upJson(jsonObject.toJSONString());
+                return resultPostRequest;
+            }
+        }
         request.params(params);
         return request;
     }

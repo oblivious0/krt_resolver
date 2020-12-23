@@ -119,8 +119,11 @@ public class AppLibManager {
      * @param json
      */
     private void parsingJson(String json) throws ModuleJsonParseException {
+        moduleUI.setPageType(ParseJsonUtil.getStringByKey(json, "pageType"));
+
         final FrameLayout headerView = moduleUI.getHeaderView();
         headerView.removeAllViews();
+
         String variableJson = ParseJsonUtil.getStringByKey(json, JsonValue.VARIABLE);
         if (!TextUtils.isEmpty(variableJson)) {
             List<ParamBean> variables = ParseJsonUtil.getBeanList(variableJson, ParamBean.class);

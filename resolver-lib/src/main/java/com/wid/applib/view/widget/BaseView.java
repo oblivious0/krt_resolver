@@ -77,6 +77,7 @@ public abstract class BaseView<T extends View> {
             initView();
         } catch (Exception e) {
             LogUtils.e(cid + " widget init err !");
+            e.printStackTrace();
         }
 
         view.post(() -> Observable.just(bean)
@@ -122,14 +123,15 @@ public abstract class BaseView<T extends View> {
     public abstract void bindData(String cid, String key, String val);
 
     /**
-     * 绑定组件事件：当terminal默认为所有端都需要执行的事件
+     * 绑定组件事件：当terminal没有绑定端，默认为所有端都需要执行的事件
      */
-    private void bindEvent() {
+    public void bindEvent() {
         if (bean.getEvent() != null) {
             if (bean.getEvent().size() != 0) {
                 List<EventBean> events = new ArrayList<>();
                 for (int z = 0; z < bean.getEvent().size(); z++) {
-                    if (bean.getEvent().get(z).getTerminal() == null) {
+                    if (bean.getEvent().get(z).getTerminal() == null ||
+                            bean.getEvent().get(z).getTerminal().size() == 0) {
                         events.add(bean.getEvent().get(z));
                         continue;
                     }

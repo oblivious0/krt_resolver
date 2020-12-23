@@ -70,6 +70,15 @@ public class CommonBean {
     private boolean showPercent;
     private boolean striped;
     private boolean stripedActive;
+    private List<String> rightEvent;
+
+    public List<String> getRightEvent() {
+        return rightEvent;
+    }
+
+    public void setRightEvent(List<String> rightEvent) {
+        this.rightEvent = rightEvent;
+    }
 
     public int getFontSize() {
         return fontSize;

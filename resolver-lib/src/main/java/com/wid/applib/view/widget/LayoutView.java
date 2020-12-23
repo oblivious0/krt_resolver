@@ -42,7 +42,10 @@ public class LayoutView extends BaseView<FrameLayout> {
         if (bean.getCommon() != null && Util.getRealColor(bean.getCommon().getShadowColor()) != 0
                 && Util.getRealColor(bean.getCommon().getShadowColor()) != -1) {
             view = new CardView(contextImp.getContext());
-            ((CardView) view).setCardBackgroundColor(Util.getRealColor(bean.getStyle().getBgColor()));
+
+            int color = Util.getRealColor(bean.getStyle().getBgColor());
+            if (color == 0) color = -1;
+            ((CardView) view).setCardBackgroundColor(color);
             ((CardView) view).setRadius(bean.getCommon().getRadius());
             ((CardView) view).setCardElevation(10);
         } else {

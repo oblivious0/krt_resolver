@@ -116,7 +116,7 @@ public class InitLoadActivity extends BaseInitLoadActivity {
         if (resourceNameView() != null)
             resourceNameView().setText("版本信息获取中...");
 
-        OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion"))
+        OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion2"))
                 .params("tag", krtCode)
                 .params("terminalCode", 1)
                 .params("terminalVersion", TERMINAL_VERSION)
@@ -155,10 +155,9 @@ public class InitLoadActivity extends BaseInitLoadActivity {
                 MProConfig.build()
                         .setKrtCode(krtCode)
                         .setFragmentClz(BaseFragment.class)
+                        .setIsPublish(versionInfoBean.getIs_publish())
                         .generate();
-
                 MProConfig.btx_json_name = appInfoBean.getStartPageId();
-
                 break;
             }
         }

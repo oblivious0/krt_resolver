@@ -119,7 +119,9 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
             switch (key) {
                 case "src":
                 case "iconFileName":
-                    MGlideUtil.load(contextImp.getContext(), val, view);
+                    if (!TextUtils.isEmpty(val)) {
+                        MGlideUtil.load(contextImp.getContext(), val, view);
+                    }
                     break;
                 default:
                     break;

@@ -70,6 +70,7 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
 
 
     private String pageId;
+    private String pageType = "";
 
     private FrameLayout parent;
     private FrameLayout navbar;
@@ -95,6 +96,9 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
 
     protected abstract void init();
 
+    /**
+     * 开始加载
+     */
     public void loadData() {
         if (parent.getChildCount() == 0) {
             File file = new File(Constants.path + getPageId() + ".json");
@@ -250,5 +254,15 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
                 }
             }
         }
+    }
+
+    @Override
+    public String getPageType() {
+        return pageType;
+    }
+
+    @Override
+    public void setPageType(String pageType) {
+        this.pageType = pageType == null ? "" : pageType;
     }
 }

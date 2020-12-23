@@ -39,7 +39,7 @@ public class BaseActivity extends BaseModuleActivity {
     }
 
     @Override
-    public String getAuthorization() {
+    public String[] getAuthorization() {
         return null;
     }
 }

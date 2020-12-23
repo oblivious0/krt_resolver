@@ -27,7 +27,7 @@ import krt.wid.util.ParseJsonUtil;
 
 
 /**
- * @author hyj
+ * @author MaGua
  * @time 2020/7/31 9:21
  * @class describe
  */
@@ -73,13 +73,10 @@ public class MRecyclerView extends RecyclerView {
         if (swipeRefreshLayout != null) {
             this.swipeRefreshLayout = swipeRefreshLayout;
             swipeRefreshLayout.setEnabled(true);
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    swipeRefreshLayout.setEnabled(false);
-                    page = initPage;
-                    start();
-                }
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                swipeRefreshLayout.setEnabled(false);
+                page = initPage;
+                start();
             });
         }
     }

@@ -32,6 +32,8 @@ import java.util.List;
 import krt.wid.util.MToast;
 import krt.wid.util.ParseJsonUtil;
 
+import static com.wid.applib.tool.PropertyBindTool.getProperty;
+
 
 /**
  * @author hyj
@@ -56,16 +58,24 @@ public abstract class MBaseEventListener implements ViewEventImp {
                 for (ParamBean paramBean : eventBean.getParams()) {
                     ParamBean bean = new ParamBean();
                     bean.setKey(paramBean.getKey());
-                    bean.setVal(paramBean.getVal());
-                    if ("static".equals(paramBean.getSource())) {
-                        if (bean.isFromBroad()) {
-                            //广播
-                            String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
-                            bean.setVal(val);
-                        }
-                    } else if ("variable".equals(paramBean.getSource())) {
-                        String val = contextImp.getContainer("element").get(bean.getVal()).toString();
-                        bean.setVal(val);
+
+
+                    switch (paramBean.getSource()) {
+                        case "props":
+                        case "variable":
+                            Object val = contextImp.getContainer("element")
+                                    .get(paramBean.getVal());
+                            bean.setVal(val.toString());
+                            break;
+
+                        case "storage":
+                            Object val1 = AppLibManager.getStorageVal(paramBean.getVal(), contextImp.getContext());
+                            bean.setVal(val1.toString());
+                            break;
+
+                        default:
+                            bean.setVal(paramBean.getVal());
+                            break;
                     }
                     paramBeans.add(bean);
                 }
@@ -105,7 +115,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
             if (eventBean1.isUrlFromApi()) {
                 // data%krt_Array%krt_linkUrl
                 String[] stringKey = eventBean1.getUrl().split("%krt_");
-                String url = PropertyBindTool.getProperty(stringKey, json);
+                String url = getProperty(stringKey, json);
                 eventBean1.setUrl(url);
             }
 
@@ -115,21 +125,29 @@ public abstract class MBaseEventListener implements ViewEventImp {
                 for (ParamBean paramBean : eventBean.getParams()) {
                     ParamBean bean = new ParamBean();
                     bean.setKey(paramBean.getKey());
-                    bean.setVal(paramBean.getVal());
-                    if ("static".equals(bean.getSource())) {
-                        if (bean.isFromBroad()) {
-                            //广播
-                            String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
-                            bean.setVal(val);
-                        }
-                    } else if ("variable".equals(bean.getSource())) {
-                        String val = contextImp.getContainer("element").get(bean.getBroadKey()).toString();
-                        bean.setVal(val);
-                    } else {
-                        if (paramBean.getVal().contains("%krt_")) {
-                            String val = PropertyBindTool.getProperty(paramBean.getVal().split("%krt_"), json);
-                            bean.setVal(val);
-                        }
+                    switch (paramBean.getSource()) {
+                        case "props":
+                        case "variable":
+                            Object val = contextImp.getContainer("element")
+                                    .get(paramBean.getVal());
+                            bean.setVal(val.toString());
+                            break;
+
+                        case "storage":
+                            Object val1 = AppLibManager.getStorageVal(paramBean.getVal(), contextImp.getContext());
+                            bean.setVal(val1.toString());
+                            break;
+
+                        case "transKey":
+                            if (paramBean.getVal().contains("%krt_")) {
+                                String val2 = getProperty(paramBean.getVal().split("%krt_"), json);
+                                bean.setVal(val2);
+                            }
+                            break;
+
+                        default:
+                            bean.setVal(paramBean.getVal());
+                            break;
                     }
                     paramBeans.add(bean);
                 }
@@ -216,7 +234,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                             for (ActionBean.Attr attr : actionBean.getAttrList()) {
                                 BaseView baseView = ((BaseView) contextImp.getContainer("view").get(val[1]));
                                 if (baseView!=null)
-                                        baseView.bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
+                                    baseView.bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
                         case "hid":

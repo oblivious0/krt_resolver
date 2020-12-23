@@ -33,8 +33,10 @@ import java.util.WeakHashMap;
 
 import krt.wid.http.MCallBack;
 import krt.wid.http.Result;
+import krt.wid.util.MDown;
 import krt.wid.util.MPermissions;
 import krt.wid.util.ParseJsonUtil;
+import okhttp3.internal.Version;
 
 import static com.wid.applib.MLib.COMPILER_VERSION;
 import static com.wid.applib.MLib.TERMINAL;
@@ -55,6 +57,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
 
     protected WeakHashMap<String, MPageInfoBean> md5CodeMap = new WeakHashMap<>();
     protected WeakHashMap<String, MResourceBean> resMap = new WeakHashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,12 +141,24 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             mDownloads.add(mVersionBean.getInterpreter_last_version().getBase_skin());
             mDownloads.add(mVersionBean.getInterpreter_last_version().getCustom_skin());
             url = mVersionBean.getInterpreter_last_version().getBase_skin();
-        } else {
+        }
+        else {
             appInfoBean = ParseJsonUtil.getBean
                     (mVersionBean.getLast_version().getApp_info(), AppInfoBean.class);
             mDownloads.add(mVersionBean.getLast_version().getBase_skin());
             mDownloads.add(mVersionBean.getLast_version().getCustom_skin());
             url = mVersionBean.getLast_version().getBase_skin();
+//            for (MVersionBean.VersionInfoBean versionInfoBean : mVersionBean.getInterpreter_enable_version()) {
+//                if (versionInfoBean.getIs_publish() == MProConfig.getInstance().getIs_publish() &&
+//                        Integer.parseInt(versionInfoBean.getInterpreter_code()) >= Integer.parseInt(COMPILER_VERSION)) {
+//                    appInfoBean = ParseJsonUtil.getBean
+//                            (versionInfoBean.getApp_info(), AppInfoBean.class);
+//                    mDownloads.add(versionInfoBean.getBase_skin());
+//                    mDownloads.add(versionInfoBean.getCustom_skin());
+//                    url = versionInfoBean.getBase_skin();
+//                    break;
+//                }
+//            }
         }
 
         if (appInfoBean != null) {
@@ -244,7 +259,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             String json = Util.getJson(files.get(i));
             String s1 = EncryptUtils.encryptMD5ToString(json);
 //            LogUtils.e(files.get(i).getName() + ":" + s + "---" + s1);
-//            md5CodeMap.remove(s.toLowerCase());
+            md5CodeMap.remove(s.toLowerCase());
             resMap.remove(files.get(i).getName());
         }
 
@@ -276,6 +291,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
 
         String[] area = url.split("/");
         String fileName = area[area.length - 1];
+
 
         OkGo.<File>get(url)
                 .execute(new FileCallback(Constants.basePath, fileName) {

@@ -81,6 +81,51 @@ public class StyleBean {
     private String mode = "";
     private boolean isCenter = false;
     private String indicatorImg;
+    private boolean backIcon;
+    private boolean rightIcon;
+    private String backIconFileName;
+    private String rightIconFileName;
+    private String rightImgUrl;
+
+    public boolean isRightIcon() {
+        return rightIcon;
+    }
+
+    public void setRightIcon(boolean rightIcon) {
+        this.rightIcon = rightIcon;
+    }
+
+    public String getRightIconFileName() {
+        return rightIconFileName;
+    }
+
+    public void setRightIconFileName(String rightIconFileName) {
+        this.rightIconFileName = rightIconFileName;
+    }
+
+    public String getRightImgUrl() {
+        return rightImgUrl;
+    }
+
+    public void setRightImgUrl(String rightImgUrl) {
+        this.rightImgUrl = rightImgUrl;
+    }
+
+    public boolean isBackIcon() {
+        return backIcon;
+    }
+
+    public void setBackIcon(boolean backIcon) {
+        this.backIcon = backIcon;
+    }
+
+    public String getBackIconFileName() {
+        return backIconFileName;
+    }
+
+    public void setBackIconFileName(String backIconFileName) {
+        this.backIconFileName = backIconFileName;
+    }
 
     public String getIndicatorImg() {
         return indicatorImg;

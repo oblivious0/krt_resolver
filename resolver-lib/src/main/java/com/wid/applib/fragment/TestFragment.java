@@ -32,7 +32,7 @@ public class TestFragment extends BaseModuleFragment {
     }
 
     @Override
-    public String getAuthorization() {
-        return "null";
+    public String[] getAuthorization() {
+        return null;
     }
 }

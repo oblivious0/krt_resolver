@@ -22,23 +22,23 @@ public class IntentUtil {
         }
 
         for (ParamBean bodyParam : params) {
-            if ("props".equals(bodyParam.getSource()) || "variable".equals(bodyParam.getSource())) {
 
-                Object val = imp.getContainer("element")
-                        .get(bodyParam.getVal());
-                intent.putExtra(bodyParam.getKey(), val == null ? bodyParam.getVal() : val.toString());
-            } else if ("storage".equals(bodyParam.getSource())) {
-                Object val = AppLibManager.getStorageVal(bodyParam.getVal(), imp.getContext());
-                intent.putExtra(bodyParam.getKey(), val == null ? bodyParam.getVal() : val.toString());
-            } else {
-                //static
-                intent.putExtra(bodyParam.getKey(), bodyParam.getVal());
-            }
+            switch (bodyParam.getSource()) {
+                case "props":
+                case "variable":
+                    Object val = imp.getContainer("element")
+                            .get(bodyParam.getVal());
+                    intent.putExtra(bodyParam.getKey(), val == null ? "" : val.toString());
+                    break;
 
-            if (bodyParam.isFromBroad()) {
-                Object val = imp.getContainer("element")
-                        .get(bodyParam.getBroadKey());
-                intent.putExtra(bodyParam.getKey(), val == null ? bodyParam.getVal() : val.toString());
+                case "storage":
+                    Object val1 = AppLibManager.getStorageVal(bodyParam.getVal(), imp.getContext());
+                    intent.putExtra(bodyParam.getKey(), val1 == null ? "" : val1.toString());
+                    break;
+
+                default:
+                    intent.putExtra(bodyParam.getKey(), bodyParam.getVal());
+                    break;
             }
         }
         imp.getContext().startActivity(intent);

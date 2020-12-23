@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    android:orientation="vertical"
-    android:paddingTop="25dp">
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/navbar"
@@ -16,10 +15,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/parent"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </ScrollView>
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

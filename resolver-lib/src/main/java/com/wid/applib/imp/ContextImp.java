@@ -51,6 +51,10 @@ public interface ContextImp {
      */
     Context getContext();
 
+    String getPageType();
+
+    void setPageType(String val);
+
     ConvertImp getConvertTool();
 
     ViewEventImp getOnClickTool();
@@ -59,6 +63,6 @@ public interface ContextImp {
 
     boolean isLogin();
 
-    String getAuthorization();
+    String[] getAuthorization();
 
 }
