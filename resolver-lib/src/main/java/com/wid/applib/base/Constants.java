@@ -24,5 +24,5 @@ public class Constants {
 
     public static final String path = Environment.getExternalStorageDirectory().getPath() + File.separator + AppUtils.getAppName() + File.separator;
 
-    public static final String basePath = Environment.getExternalStorageDirectory().getPath() + File.separator + AppUtils.getAppName();
+    public static final String basePath = Environment.getExternalStorageDirectory().getPath() + File.separator + AppUtils.getAppName() ;
 }

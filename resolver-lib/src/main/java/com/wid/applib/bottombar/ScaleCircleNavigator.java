@@ -40,7 +40,7 @@ public class ScaleCircleNavigator extends View implements IPagerNavigator, Navig
 
     // 事件回调
     private boolean mTouchable;
-    private ScaleCircleNavigator.OnCircleClickListener mCircleClickListener;
+    private OnCircleClickListener mCircleClickListener;
     private float mDownX;
     private float mDownY;
     private int mTouchSlop;

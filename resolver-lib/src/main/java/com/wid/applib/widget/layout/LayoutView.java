@@ -1,19 +1,17 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.layout;
 
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 
 import androidx.cardview.widget.CardView;
 
-import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.tool.ModuleViewFactory;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 
 import java.util.ArrayList;
 import java.util.List;

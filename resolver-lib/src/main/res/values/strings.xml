@@ -3,4 +3,7 @@
     <item name="cid" type="id"></item>
     <item name="pid" type="id"></item>
     <item name="pageId" type="id"></item>
+    <string name="gravity_left">left</string>
+    <string name="gravity_center">center</string>
+    <string name="gravity_right">right</string>
 </resources>

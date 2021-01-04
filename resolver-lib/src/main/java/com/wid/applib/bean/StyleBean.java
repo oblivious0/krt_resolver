@@ -43,6 +43,7 @@ public class StyleBean {
     private boolean lineBreakMode;
     private int opacity;
     private String textAlign;
+    private String inputAlign;
     private int textIndent;
     private String textShadowColor;
     private int textShadowOffsetX;
@@ -86,6 +87,23 @@ public class StyleBean {
     private String backIconFileName;
     private String rightIconFileName;
     private String rightImgUrl;
+    private String placeholder;
+
+    public String getInputAlign() {
+        return inputAlign;
+    }
+
+    public void setInputAlign(String inputAlign) {
+        this.inputAlign = inputAlign;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
 
     public boolean isRightIcon() {
         return rightIcon;

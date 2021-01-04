@@ -8,7 +8,6 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.CloneUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.wid.applib.bean.ActionBean;
@@ -17,10 +16,9 @@ import com.wid.applib.bean.EventBean;
 import com.wid.applib.bean.ParamBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
-import com.wid.applib.tool.PropertyBindTool;
 import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.view.MRecyclerView;
-import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.widget.BaseView;
 import com.youth.banner.Banner;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import krt.wid.util.MToast;
-import krt.wid.util.ParseJsonUtil;
 
 import static com.wid.applib.tool.PropertyBindTool.getProperty;
 
@@ -81,7 +78,7 @@ public abstract class MBaseEventListener implements ViewEventImp {
                 }
             }
 
-            action(view, eventBean, eventBean.getParams());
+            action(view, eventBean, paramBeans);
         }
     }
 
@@ -108,9 +105,6 @@ public abstract class MBaseEventListener implements ViewEventImp {
         }
 
         for (EventBean eventBean : eventBeans) {
-            if ("c67a44a5b9d6037".equals(eventBean.getCid())){
-                LogUtils.e("");
-            }
             EventBean eventBean1 = CloneUtils.deepClone(eventBean, EventBean.class);
             if (eventBean1.isUrlFromApi()) {
                 // data%krt_Array%krt_linkUrl
@@ -190,8 +184,8 @@ public abstract class MBaseEventListener implements ViewEventImp {
             case EventMessageWarp.SEND_AJAX:
                 for (String ids : eventBean.getAjaxIds()) {
                     String[] cell = ids.split("%krt_");
+                    ContextImp ctx = null;
                     for (String cellStr : cell) {
-                        ContextImp ctx = null;
                         String[] splitStr = cellStr.split("%krt%");
                         if ("page".equals(splitStr[0])) {
                             if (splitStr[1].equals(contextImp.getPageId())) {
@@ -237,8 +231,11 @@ public abstract class MBaseEventListener implements ViewEventImp {
                                     baseView.bindData(val[1], attr.getAttr().split("_")[1], attr.getTarget());
                             }
                             break;
-                        case "hid":
+                        case "hide":
                             ((BaseView) contextImp.getContainer("view").get(val[1])).view.setVisibility(View.GONE);
+                            break;
+                        case "show":
+                            ((BaseView) contextImp.getContainer("view").get(val[1])).view.setVisibility(View.VISIBLE);
                             break;
                         case "clear":
                             BaseView baseView = ((BaseView) contextImp.getContainer("view").get(val[1]));

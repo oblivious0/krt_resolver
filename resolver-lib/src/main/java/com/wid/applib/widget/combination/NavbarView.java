@@ -1,20 +1,20 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.combination;
 
 import android.text.TextUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
 import com.wid.applib.MLib;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bean.EventBean;
 import com.wid.applib.imp.ContextImp;
-import com.wid.applib.util.EventBindUtil;
+import com.wid.applib.util.CropUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
 import com.wid.applib.view.NavBar;
+import com.wid.applib.widget.BaseView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,10 @@ public class NavbarView extends BaseView<LinearLayout> {
                         .override(50, 50)
                         .into(imageView);
             } else if (!TextUtils.isEmpty(bean.getStyle().getBackIconFileName())) {
-
+                String[] dir = bean.getStyle().getBackIconFileName().split("/");
+                CropUtil.getInstance().cropImg(contextImp.getContext(),
+                        dir[dir.length - 1],
+                        bean.getStyle().getBackIconParam(), bitmap -> imageView.setImageBitmap(bitmap));
             }
             mTitle.setCustomLeftView(imageView);
         } else {
@@ -85,13 +88,17 @@ public class NavbarView extends BaseView<LinearLayout> {
                         .override(50, 50)
                         .into(imageView);
             } else if (!TextUtils.isEmpty(bean.getStyle().getRightIconFileName())) {
-
+                String[] dir = bean.getStyle().getRightIconFileName().split("/");
+                CropUtil.getInstance().cropImg(contextImp.getContext(),
+                        dir[dir.length - 1],
+                        bean.getStyle().getRightIconFileName(), bitmap -> imageView.setImageBitmap(bitmap));
             }
             mTitle.setCustomRightView(imageView);
         } else {
             mTitle.setRightText(bean.getCommon().getRightText(),
-                    Util.getRealColor(bean.getStyle().getRightTextColor()),
-                    Util.getRealValue(bean.getStyle().getRightFontSize()));
+                    bean.getStyle().getRightFontSize() / 2,
+                    Util.getRealColor(bean.getStyle().getRightTextColor()) == -1 ?
+                            -2 : Util.getRealColor(bean.getStyle().getRightTextColor()));
         }
 
         FrameLayout.LayoutParams lp1 = FrameParamsBuilder.builder()
@@ -127,7 +134,8 @@ public class NavbarView extends BaseView<LinearLayout> {
             // 筛选android端匹配的事件
             if (bean.getEvent().size() != 0) {
                 for (int z = 0; z < bean.getEvent().size(); z++) {
-                    if (bean.getCommon().getRightEvent().contains(bean.getEvent().get(z).getCid())) {
+                    if (bean.getCommon().getRightEvent() != null &&
+                            bean.getCommon().getRightEvent().contains(bean.getEvent().get(z).getCid())) {
                         if (bean.getEvent().get(z).getTerminal() == null ||
                                 bean.getEvent().get(z).getTerminal().size() == 0) {
                             rightEvent.add(bean.getEvent().get(z));

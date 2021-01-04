@@ -10,7 +10,7 @@ import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.view.MRecyclerView;
-import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.widget.BaseView;
 import com.youth.banner.Banner;
 
 import java.util.ArrayList;

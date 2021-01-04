@@ -1,7 +1,6 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.layout;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,13 +15,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bottombar.SViewPager;
@@ -30,6 +26,7 @@ import com.wid.applib.config.MProConfig;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
@@ -168,7 +165,6 @@ public class TabTitleView extends BaseView<LinearLayout> {
         name.setTextSize(TypedValue.COMPLEX_UNIT_PX, Util.getRealValue(bean.getStyle().getTextFont()));
         line.setLayoutParams(new LinearLayout.LayoutParams(bean.getStyle().getIndicatorWidth(),bean.getStyle().getIndicatorHeight()));
         line.setScaleType(ImageView.ScaleType.FIT_XY);
-        LogUtils.e(line.getParent(),line.getLayoutParams());
         MGlideUtil.load(contextImp.getContext(), bean.getStyle().getIndicatorImg(), line);
         commonPagerTitleView.setContentView(customLayout);
         commonPagerTitleView.setOnPagerTitleChangeListener(new CommonPagerTitleView.OnPagerTitleChangeListener() {

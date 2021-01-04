@@ -3,10 +3,8 @@ package com.wid.applib.http;
 import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.alibaba.fastjson.JSONObject;
-import com.blankj.utilcode.util.LogUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.HttpParams;
@@ -19,17 +17,19 @@ import com.wid.applib.bean.BindDataBean;
 import com.wid.applib.bean.ParamBean;
 import com.wid.applib.bean.TransferKeyBean;
 import com.wid.applib.config.MProConfig;
-import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.tool.PropertyBindTool;
-import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.widget.BaseView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import krt.wid.bean.event.MEventBean;
 import krt.wid.http.MCallBack;
-import krt.wid.http.Result;
 import krt.wid.util.MConstants;
 import krt.wid.util.ParseJsonUtil;
 
@@ -39,6 +39,8 @@ import krt.wid.util.ParseJsonUtil;
  * @class describe
  */
 public class AjaxUtil {
+
+    public static final HashMap<String, JSONObject> requestBodys = new HashMap<>();
 
     private static final int PARAM_TYPE_URL_ENCODE = 0;
     private static final int PARAM_TYPE_JSON = 1;
@@ -135,6 +137,7 @@ public class AjaxUtil {
             if (request instanceof PostRequest) {
                 PostRequest<MResult> resultPostRequest = (PostRequest<MResult>) request;
                 resultPostRequest.upJson(jsonObject.toJSONString());
+                requestBodys.put(bean.getCid(), jsonObject);
                 return resultPostRequest;
             }
         }

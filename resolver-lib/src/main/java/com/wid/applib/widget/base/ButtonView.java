@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.base;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -13,6 +13,7 @@ import com.wid.applib.imp.ContextImp;
 import com.wid.applib.util.ColorUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 
 /**
  * author: MaGua

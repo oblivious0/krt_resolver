@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.base;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
@@ -8,15 +8,16 @@ import android.widget.ImageView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.joooonho.SelectableRoundedImageView;
-import com.wid.applib.R;
 import com.wid.applib.animate.FlubberAnimate;
 import com.wid.applib.base.Constants;
 import com.wid.applib.bean.BaseLayoutBean;
+import com.wid.applib.config.MProConfig;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.DownManager;
 import com.wid.applib.util.CropUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -67,21 +68,26 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
         }
         if (bean.getStyle().isIcon()) {
             if (!TextUtils.isEmpty(bean.getStyle().getIconFileName())) {
-                String[] urls = bean.getStyle().getIconFileName().split("/");
+                if (!bean.getStyle().getIconFileName().equals("customSkin")) {
+                    String[] urls = bean.getStyle().getIconFileName().split("/");
 
-                String picName = urls[urls.length - 1];
-                File file = new File(Constants.basePath + "/" + picName);
-                if (file.exists()) {
-                    CropUtil.getInstance().cropImg(contextImp.getContext(), picName,
-                            bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
+                    String picName = urls[urls.length - 1];
+                    File file = new File(Constants.basePath + "/" + picName);
+                    if (file.exists()) {
+                        CropUtil.getInstance().cropImg(contextImp.getContext(), picName,
+                                bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
+                    } else {
+                        //如果不存在需先下载
+                        DownManager.downResOnBack(bean.getStyle().getIconFileName(),
+                                picName, filePath -> {
+                                    LogUtils.e(filePath);
+                                    CropUtil.getInstance().cropImg(contextImp.getContext(), filePath,
+                                            bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
+                                });
+                    }
                 } else {
-                    //如果不存在需先下载
-                    DownManager.downResOnBack(bean.getStyle().getIconFileName(),
-                            picName, filePath -> {
-                                LogUtils.e(filePath);
-                                CropUtil.getInstance().cropImg(contextImp.getContext(), filePath,
-                                        bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
-                            });
+                    CropUtil.getInstance().cropImg(contextImp.getContext(), MProConfig.skin_name,
+                            bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
                 }
             }
         } else {
@@ -118,7 +124,7 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
         if (cid.equals(this.cid)) {
             switch (key) {
                 case "src":
-                case "iconFileName":
+//                case "iconFileName":
                     if (!TextUtils.isEmpty(val)) {
                         MGlideUtil.load(contextImp.getContext(), val, view);
                     }

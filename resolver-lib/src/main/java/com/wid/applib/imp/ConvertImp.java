@@ -1,9 +1,7 @@
 package com.wid.applib.imp;
 
-import android.view.View;
-
 import com.wid.applib.bean.BaseLayoutBean;
-import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.widget.BaseView;
 
 /**
  * author:Marcus

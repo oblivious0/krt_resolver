@@ -17,7 +17,7 @@ public class MLib {
     /**
      * 当前解析器版本
      */
-    public final static String COMPILER_VERSION = "3";
+    public final static String COMPILER_VERSION = "4";
     /**
      * 当前解析器端版本
      */

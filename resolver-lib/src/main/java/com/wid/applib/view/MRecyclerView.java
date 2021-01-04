@@ -8,22 +8,28 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.base.Request;
 import com.wid.applib.http.MJsonConvert;
 import com.wid.applib.http.MResult;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import krt.wid.bean.event.MEventBean;
 import krt.wid.http.MCallBack;
-import krt.wid.http.Result;
 import krt.wid.util.MConstants;
 import krt.wid.util.ParseJsonUtil;
+
+import static com.wid.applib.http.AjaxUtil.requestBodys;
 
 
 /**
@@ -40,10 +46,14 @@ public class MRecyclerView extends RecyclerView {
     private SwipeRefreshLayout swipeRefreshLayout;
     private Activity mContext;
     private BaseQuickAdapter<Object, BaseViewHolder> mAdapter;
+    public TCallBack callBack;
+    private String ajaxCid;
+    private String[] bindKeys;
 
-    public MRecyclerView(@NonNull Context context) {
+    public MRecyclerView(@NonNull Context context, String[] bind) {
         super(context);
         mContext = (Activity) context;
+        this.bindKeys = bind;
     }
 
     public void setPageTurning(boolean pageTurning, int size) {
@@ -81,74 +91,29 @@ public class MRecyclerView extends RecyclerView {
         }
     }
 
-    public void setPageAjax(Request request, String pageField, String sizeField) {
+    public void setPageAjax(Request request, String pageField, String sizeField, String ajaxCid) {
         this.request = request;
         this.pageField = pageField;
         this.sizeField = sizeField;
+        this.ajaxCid = ajaxCid;
         swipeRefreshLayout.setEnabled(true);
     }
 
     public void start() {
         if (request != null) {
-            request.params(pageField, page)
-                    .execute(new MCallBack<MResult>(mContext, isPageTurning) {
-                        @Override
-                        public void onSuccess(Response<MResult> response) {
-                            if (response.body().isSuccess()) {
-                                List<Object> list = ParseJsonUtil.getBeanList(
-                                        ParseJsonUtil.toJson(response.body().data), Object.class);
-
-                                if (page == initPage) {
-                                    mAdapter.setNewData(list);
-                                } else {
-                                    mAdapter.addData(list);
-                                    mAdapter.loadMoreComplete();
-                                }
-
-                                if (response.body().totalPage==-1) {
-                                    if (list.size() < size) {
-                                        mAdapter.loadMoreEnd();
-                                    } else {
-                                        mAdapter.setEnableLoadMore(true);
-                                    }
-                                }else{
-                                    if (page==response.body().totalPage){
-                                        mAdapter.loadMoreEnd();
-                                    }else{
-                                        mAdapter.setEnableLoadMore(true);
-                                    }
-                                }
-
-                                if (swipeRefreshLayout.isRefreshing()) {
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-
-                            }
-                        }
-
-                        @Override
-                        public MResult convertResponse(okhttp3.Response response) throws Throwable {
-                            MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
-                            MResult result = convert.convertResponse(response);
-                            if (result!=null){
-                                if (!result.isSuccess()){
-                                    EventBus.getDefault().post(new MEventBean(MConstants.ACTION_RESULT_CODE, result.code));
-                                }
-                            }
-
-                            return result;
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            super.onFinish();
-                            if (swipeRefreshLayout != null) {
-                                swipeRefreshLayout.setEnabled(isPageTurning);
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        }
-                    });
+            callBack = new TCallBack(mContext, isPageTurning);
         }
+
+        if (request.getHeaders().get("Content-Type").equals("application/json;charset=utf-8")) {
+            JSONObject jsonObject = requestBodys.get(ajaxCid);
+            jsonObject.remove(pageField);
+            jsonObject.put(pageField, page);
+            ((PostRequest) request).upJson(jsonObject.toJSONString());
+        } else {
+            request.params(pageField, page);
+        }
+
+        request.execute(callBack);
     }
 
     private BaseQuickAdapter<Object, BaseViewHolder> getBaseAdapter() {
@@ -162,6 +127,94 @@ public class MRecyclerView extends RecyclerView {
     public void setAdapter(@Nullable Adapter adapter) {
         super.setAdapter(adapter);
         getBaseAdapter();
+    }
+
+    public class TCallBack extends MCallBack<MResult> {
+
+        public TCallBack(Activity activity) {
+            super(activity);
+        }
+
+        public TCallBack(Activity activity, boolean showDialog) {
+            super(activity, showDialog);
+        }
+
+        @Override
+        public MResult convertResponse(okhttp3.Response response) throws Throwable {
+            MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
+            MResult result = convert.convertResponse(response);
+            if (result != null) {
+                if (!result.isSuccess()) {
+                    EventBus.getDefault().post(new MEventBean(MConstants.ACTION_RESULT_CODE, result.code));
+                }
+            }
+
+            return result;
+        }
+
+        @Override
+        public void onSuccess(Response<MResult> response) {
+            if (response.body().isSuccess()) {
+                List<Object> list = new ArrayList<>();
+
+                try {
+                    String data = ParseJsonUtil.toJson(response.body().data);
+                    String currentData = data;
+                    for (int i = 1; i < bindKeys.length; i++) {
+                        switch (bindKeys[i]) {
+                            case "data":
+                                currentData = ParseJsonUtil.getStringByKey(currentData, "data");
+                                break;
+                            case "Array":
+                            case "array":
+                                String res = JSON.toJSON(currentData).toString();
+                                list = JSONArray.parseArray(res, Object.class);
+                                break;
+                            default:
+                        }
+                    }
+                } catch (Exception e) {
+                    //data%krt_data%krt_Array%krt_familySum
+
+                }
+
+
+                if (page == initPage) {
+                    mAdapter.setNewData(list);
+                } else {
+                    mAdapter.addData(list);
+                    mAdapter.loadMoreComplete();
+                }
+
+                if (response.body().totalPage == -1) {
+                    if (list != null && list.size() < size) {
+                        mAdapter.loadMoreEnd();
+                    } else {
+                        mAdapter.setEnableLoadMore(true);
+                    }
+                } else {
+                    if (page == response.body().totalPage) {
+                        mAdapter.loadMoreEnd();
+                    } else {
+                        mAdapter.setEnableLoadMore(true);
+                    }
+                }
+
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
+            }
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setEnabled(isPageTurning);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
     }
 
 }

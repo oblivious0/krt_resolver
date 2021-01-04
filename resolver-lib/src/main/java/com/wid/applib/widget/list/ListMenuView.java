@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.list;
 
 import android.view.View;
 import android.widget.FrameLayout;
@@ -10,6 +10,7 @@ import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.util.AdapterUtil;
 import com.wid.applib.util.FrameParamsBuilder;
+import com.wid.applib.widget.BaseView;
 
 /**
  * author: MaGua
@@ -39,12 +40,13 @@ public class ListMenuView extends BaseView<RecyclerView> {
                 .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
+        view.setAdapter(new AdapterUtil.ListMenusAdapter(bean.getCommon().getList()));
+        view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
     }
 
     @Override
     protected boolean bindInNewThread() {
-        view.setAdapter(new AdapterUtil.ListMenusAdapter(bean.getCommon().getList()));
-        view.setVisibility(bean.getCommon().isIsHidden() ? View.GONE : View.VISIBLE);
+
         return true;
     }
 

@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget;
 
 import android.annotation.SuppressLint;
 import android.view.View;
@@ -15,11 +15,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
-import krt.wid.util.ParseJsonUtil;
 
 /**
  * author: MaGua
@@ -72,23 +68,27 @@ public abstract class BaseView<T extends View> {
 
     @SuppressLint("CheckResult")
     private void generate() {
-        cid = bean.getCid();
+        cid =  bean.getCid();
         try {
             initView();
+
+            view.post(() -> Observable.just(bean)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.newThread())
+                    .filter(baseLayoutBean -> bindInNewThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(baseLayoutBean -> {
+                        bindInMainThread();
+                        bindEvent();
+                    }));
         } catch (Exception e) {
-            LogUtils.e(cid + " widget init err !");
+            LogUtils.e(type + ":" + cid + " widget init err !",
+                    e.getMessage()
+            );
             e.printStackTrace();
         }
 
-        view.post(() -> Observable.just(bean)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.newThread())
-                .filter(baseLayoutBean -> bindInNewThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(baseLayoutBean -> {
-                    bindInMainThread();
-                    bindEvent();
-                }));
+
     }
 
     /**

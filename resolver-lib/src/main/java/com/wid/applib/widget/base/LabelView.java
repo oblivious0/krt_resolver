@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.base;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -11,11 +11,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.wid.applib.R;
+import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 
 /**
  * author: MaGua
@@ -103,24 +104,28 @@ public class LabelView extends BaseView<TextView> {
         try {
             if (cid.equals(this.cid)) {
                 switch (key) {
+                    case "color":
+                        view.setTextColor(Util.getRealColor(val));
+                        break;
                     case "text":
                         if (TextUtils.isEmpty(val)) {
                             view.setText("");
                         } else {
-                            double num ;
-                            try {
-                                num = Double.parseDouble(val);
-                                if (num % 1 == 0) {
-                                    view.setText(String.valueOf((int) num));
-                                } else {
-                                    view.setText(String.valueOf(num));
+                            if (val.contains(".")) {
+                                double num;
+                                try {
+                                    num = Double.parseDouble(val);
+                                    if (num % 1 == 0) {
+                                        view.setText(String.valueOf((int) num));
+                                    } else {
+                                        view.setText(String.valueOf(num));
+                                    }
+                                } catch (Exception e) {
+                                    view.setText(Html.fromHtml(val));
                                 }
-
-                            } catch (Exception e) {
+                            } else {
                                 view.setText(Html.fromHtml(val));
                             }
-
-
                         }
                         break;
                     case "fontSize":

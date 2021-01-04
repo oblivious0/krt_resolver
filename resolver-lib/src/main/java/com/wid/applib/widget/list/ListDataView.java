@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.list;
 
 import android.app.Activity;
 import android.graphics.drawable.GradientDrawable;
@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.okgo.model.Response;
@@ -25,12 +28,12 @@ import com.wid.applib.util.BindDataUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
 import com.wid.applib.view.MRecyclerView;
+import com.wid.applib.widget.BaseView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import krt.wid.http.MCallBack;
-import krt.wid.http.Result;
 import krt.wid.util.ParseJsonUtil;
 
 /**
@@ -41,6 +44,7 @@ import krt.wid.util.ParseJsonUtil;
 public class ListDataView extends BaseView<MRecyclerView> {
 
     private List<Object> list = new ArrayList<>();
+    private String data = "";
 
     public ListDataView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
@@ -52,13 +56,24 @@ public class ListDataView extends BaseView<MRecyclerView> {
 
     @Override
     protected void initView() {
+
         type = "list";
         list = BindDataUtil.getDatas(bean);
-        view = new MRecyclerView(contextImp.getContext());
+        String[] str;
+        if (list == null) {
+            str = bean.getAjax().get(0).getBindData().get(0).getBindKeys();
+        } else {
+            str = bean.getStaticData().getBindData().get(0).getBindKeys();
+        }
+        view = new MRecyclerView(contextImp.getContext(), str);
+
+
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(FrameLayout.LayoutParams.MATCH_PARENT)
 //                .setHeight(bean.getCommon().getHeight() == 800 ? FrameLayout.LayoutParams.MATCH_PARENT : bean.getCommon().getHeight())
-                .setHeight(contextImp.getPageType().equals("list") ? FrameLayout.LayoutParams.MATCH_PARENT : bean.getCommon().getHeight())
+                .setHeight(contextImp.getPageType().equals("list") ?
+                        ((Activity) contextImp.getContext()).getWindowManager().getDefaultDisplay().getHeight() - 60
+                        : bean.getCommon().getHeight())
                 .setMarginLeft(bean.getCommon().getX())
                 .setMarginTop(bean.getCommon().getY())
                 .build();
@@ -85,46 +100,75 @@ public class ListDataView extends BaseView<MRecyclerView> {
 
         try {
             if (list == null) {
-
-                MCallBack callBack = new MCallBack<MResult>((Activity) contextImp.getContext(), false) {
-                    @Override
-                    public void onSuccess(Response<MResult> response) {
-                        if (response.body().isSuccess()) {
-
-                            list = ParseJsonUtil.getBeanList(
-                                    ParseJsonUtil.toJson(response.body().data), Object.class);
-                            adapter.setNewData(list);
-                        }
-                    }
-
-                    @Override
-                    public MResult convertResponse(okhttp3.Response response) throws Throwable {
-                        MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
-                        return convert.convertResponse(response);
-                    }
-                };
-
-                if (!TextUtils.isEmpty(bean.getAjax().get(0).getCid())) {
-                    contextImp.getContainer("callback").put(bean.getAjax().get(0).getCid(), callBack);
-                    contextImp.getContainer("ajax").put(bean.getAjax().get(0).getCid(), bean.getAjax().get(0));
-                }
-
                 Request request = AjaxUtil.assembleRequest(bean.getAjax().get(0), contextImp);
                 if (!TextUtils.isEmpty(bean.getAjax().get(0).getSizeField())) {
-                    SwipeRefreshLayout  swipeRefreshLayout = ((ContextImp) contextImp.getContext()).getSwipeRefreshLayout();
+                    SwipeRefreshLayout swipeRefreshLayout = (contextImp).getSwipeRefreshLayout();
                     view.setSwipeRefreshLayout(swipeRefreshLayout);
                     view.setPageTurning(true, getVal(bean.getAjax().get(0).getSizeField(),
                             bean.getAjax().get(0).getData()));
                     view.setPageAjax(request,
                             bean.getAjax().get(0).getPageField(),
-                            bean.getAjax().get(0).getSizeField());
+                            bean.getAjax().get(0).getSizeField(),
+                            bean.getAjax().get(0).getCid());
                     view.setInitPage(getVal(bean.getAjax().get(0).getPageField(), bean.getAjax().get(0).getData()));
                     view.start();
+
+                    if (!TextUtils.isEmpty(bean.getAjax().get(0).getCid())) {
+                        contextImp.getContainer("callback").put(bean.getAjax().get(0).getCid(), view.callBack);
+                        contextImp.getContainer("ajax").put(bean.getAjax().get(0).getCid(), bean.getAjax().get(0));
+                    }
+
                 } else {
+
+                    MCallBack callBack = new MCallBack<MResult>((Activity) contextImp.getContext(), false) {
+                        @Override
+                        public void onSuccess(Response<MResult> response) {
+                            if (response.body().isSuccess()) {
+
+                                try {
+                                    data = ParseJsonUtil.toJson(response.body().data);
+                                    String[] str = bean.getAjax().get(0).getBindData().get(0).getBindKeys();
+                                    String currentData = data;
+                                    for (int i = 1; i < str.length; i++) {
+                                        switch (str[i]) {
+                                            case "data":
+                                                currentData = ParseJsonUtil.getStringByKey(currentData, "data");
+                                                break;
+                                            case "Array":
+                                            case "array":
+                                                String res = JSON.toJSON(currentData).toString();
+                                                list = JSONArray.parseArray(res, Object.class);
+                                                return;
+                                            default:
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    //data%krt_data%krt_Array%krt_familySum
+
+                                } finally {
+                                    adapter.setNewData(list);
+                                }
+
+                            }
+                        }
+
+                        @Override
+                        public MResult convertResponse(okhttp3.Response response) throws Throwable {
+                            MJsonConvert<MResult> convert = new MJsonConvert<>(MResult.class);
+                            return convert.convertResponse(response);
+                        }
+                    };
+
+                    if (!TextUtils.isEmpty(bean.getAjax().get(0).getCid())) {
+                        contextImp.getContainer("callback").put(bean.getAjax().get(0).getCid(), callBack);
+                        contextImp.getContainer("ajax").put(bean.getAjax().get(0).getCid(), bean.getAjax().get(0));
+                    }
+
                     request.execute(callBack);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -36,8 +36,8 @@ public class BindDataBean {
         this.bindKey = bindKey;
     }
 
-    public String getBindType() {
-        return bindType;
+    public String[] getBindType() {
+        return bindType.split("%krt_");
     }
 
     public void setBindType(String bindType) {

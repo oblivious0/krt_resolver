@@ -71,6 +71,15 @@ public class CommonBean {
     private boolean striped;
     private boolean stripedActive;
     private List<String> rightEvent;
+    private String highLightId;
+
+    public String getHighLightId() {
+        return highLightId;
+    }
+
+    public void setHighLightId(String highLightId) {
+        this.highLightId = highLightId;
+    }
 
     public List<String> getRightEvent() {
         return rightEvent;

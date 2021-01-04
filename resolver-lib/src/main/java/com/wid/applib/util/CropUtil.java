@@ -49,9 +49,17 @@ public class CropUtil {
                     }
                     Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                     String[] origin = linksBean.getOriginSkin().split("_");
-                    Bitmap originImg = Bitmap.createBitmap(bitmap, Integer.parseInt(origin[2]) - 1, Integer.parseInt(origin[3]), Integer.parseInt(origin[0]) - 1, Integer.parseInt(origin[1]) - 1);
+                    Bitmap originImg = Bitmap.createBitmap(bitmap,
+                            Integer.parseInt(origin[2]) > 1 ? Integer.parseInt(origin[2]) - 1 : Integer.parseInt(origin[2]),
+                            Integer.parseInt(origin[3]),
+                            Integer.parseInt(origin[0]) - 1,
+                            Integer.parseInt(origin[1]) - 1);
                     String[] select = linksBean.getSelectSkin().split("_");
-                    Bitmap selectImg = Bitmap.createBitmap(bitmap, Integer.parseInt(select[2]) - 1, Integer.parseInt(select[3]), Integer.parseInt(select[0]) - 1, Integer.parseInt(select[1]) - 1);
+                    Bitmap selectImg = Bitmap.createBitmap(bitmap,
+                            Integer.parseInt(select[2]) > 1 ? Integer.parseInt(select[2]) - 1 : Integer.parseInt(select[2]),
+                            Integer.parseInt(select[3]),
+                            Integer.parseInt(select[0]) - 1,
+                            Integer.parseInt(select[1]) - 1);
                     linksBean.setOriginImg(saveBitmap(originImg, linksBean.getOriginSkin() + ".png"));
                     linksBean.setSelectImg(saveBitmap(selectImg, linksBean.getSelectSkin() + ".png"));
 
@@ -59,17 +67,9 @@ public class CropUtil {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        callBack.callback();
-                    }
-                })
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object aVoid) throws Exception {
+                .doFinally(() -> callBack.callback())
+                .subscribe(aVoid -> {
 
-                    }
                 });
     }
 
@@ -77,24 +77,17 @@ public class CropUtil {
     public void cropImg(final Context context, final String content, final CropListener listener) {
         final String path = SpUtil.getIconSkinPath(context);
         if (TextUtils.isEmpty(path)) return;
-        Observable.create(new ObservableOnSubscribe<Bitmap>() {
-
-            @Override
-            public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
-                Bitmap bitmap = BitmapFactory.decodeFile(path);
-                String[] contents = content.split("_");
-                Bitmap cropImg = Bitmap.createBitmap(bitmap, Integer.parseInt(contents[2]), Integer.parseInt(contents[3]), Integer.parseInt(contents[0]), Integer.parseInt(contents[1]) - 1);
-                emitter.onNext(cropImg);
-                emitter.onComplete();
-            }
+        Observable.create((ObservableOnSubscribe<Bitmap>) emitter -> {
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            String[] contents = content.split("_");
+            Bitmap cropImg = Bitmap.createBitmap(bitmap, Integer.parseInt(contents[2]), Integer.parseInt(contents[3]), Integer.parseInt(contents[0]), Integer.parseInt(contents[1]) - 1);
+            emitter.onNext(cropImg);
+            emitter.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Bitmap>() {
-                    @Override
-                    public void accept(Bitmap b) throws Exception {
-                        if (b != null) {
-                            listener.callback(b);
-                        }
+                .subscribe(b -> {
+                    if (b != null) {
+                        listener.callback(b);
                     }
                 });
     }
@@ -102,24 +95,27 @@ public class CropUtil {
     @SuppressLint("checkResult")
     public void cropImg(final Context context, final String name, final String content, final CropListener listener) {
         final File file = new File(Constants.path + name);
+        LogUtils.e(Constants.path + name);
         if (!file.exists()) return;
-        Observable.create(new ObservableOnSubscribe<Bitmap>() {
-            @Override
-            public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
+        Observable.create((ObservableOnSubscribe<Bitmap>) emitter -> {
+            try {
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                 String[] contents = content.split("_");
-                Bitmap cropImg = Bitmap.createBitmap(bitmap, Integer.parseInt(contents[2]), Integer.parseInt(contents[3]), Integer.parseInt(contents[0]), Integer.parseInt(contents[1]) - 1);
+                Bitmap cropImg = Bitmap.createBitmap(bitmap,
+                        Integer.parseInt(contents[2]),
+                        Integer.parseInt(contents[3]),
+                        Integer.parseInt(contents[0]),
+                        Integer.parseInt(contents[1]) - 1);
                 emitter.onNext(cropImg);
-                emitter.onComplete();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            emitter.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Bitmap>() {
-                    @Override
-                    public void accept(Bitmap b) throws Exception {
-                        if (b != null) {
-                            listener.callback(b);
-                        }
+                .subscribe(b -> {
+                    if (b != null) {
+                        listener.callback(b);
                     }
                 });
 

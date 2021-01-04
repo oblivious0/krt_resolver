@@ -27,7 +27,7 @@ public class BaseActivity extends BaseModuleActivity {
     @Override
     public ViewEventImp getOnClickTool() {
 
-        if (eventInstance==null)
+        if (eventInstance == null)
             eventInstance = new BaseEventInstance(this);
 
         return null;
@@ -39,7 +39,8 @@ public class BaseActivity extends BaseModuleActivity {
     }
 
     @Override
+
     public String[] getAuthorization() {
-        return null;
+        return new String[]{"", ""};
     }
 }

@@ -40,6 +40,6 @@ public class BaseFragment extends BaseModuleFragment {
 
     @Override
     public String[] getAuthorization() {
-        return null;
+        return new String[]{"",""};
     }
 }

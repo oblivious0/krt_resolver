@@ -17,11 +17,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
+
+import com.blankj.utilcode.util.LogUtils;
 import com.wid.applib.MLib;
 import com.wid.applib.R;
 import com.wid.applib.base.BaseModuleFragment;
 import com.wid.applib.base.Constants;
 import com.wid.applib.bean.BottomBean;
+import com.wid.applib.config.MProConfig;
 import com.wid.applib.util.CropUtil;
 import com.wid.applib.util.Util;
 
@@ -106,8 +110,11 @@ public class BottomLayout extends LinearLayout {
         }
         bottomBean = ParseJsonUtil.getBean(json, BottomBean.class);
         String skinPath = bottomBean.getCommon().getSkinName();
-        if (skinPath!=null&&!TextUtils.isEmpty(skinPath.trim()))
+        if (skinPath != null && !TextUtils.isEmpty(skinPath.trim())) {
             skinName = skinPath.substring(skinPath.lastIndexOf("/"));
+        } else {
+            skinName = MProConfig.skin_name;
+        }
         allList = bottomBean.getCommon().getLinks();
         if (!TextUtils.isEmpty(bottomBean.getCommon().getSkinName())) {
             String[] names = bottomBean.getCommon().getSkinName().split("/");
@@ -227,12 +234,7 @@ public class BottomLayout extends LinearLayout {
                 @Override
                 public void onSelected(int index, int totalCount) {
                     if (list.get(index).isSkinIcon()) {
-                        CropUtil.getInstance().cropImg(context, fileName, list.get(index).getSelectSkin(), new CropUtil.CropListener() {
-                            @Override
-                            public void callback(Bitmap bitmap) {
-                                titleImg.setImageBitmap(bitmap);
-                            }
-                        });
+                        CropUtil.getInstance().cropImg(context, skinName, list.get(index).getSelectSkin(), bitmap -> titleImg.setImageBitmap(bitmap));
                     } else {
                         MGlideUtil.load(context, list.get(index).getSelectImgUrl(), titleImg);
                     }
@@ -242,12 +244,7 @@ public class BottomLayout extends LinearLayout {
                 @Override
                 public void onDeselected(int index, int totalCount) {
                     if (list.get(index).isSkinIcon()) {
-                        CropUtil.getInstance().cropImg(context, fileName, list.get(index).getOriginSkin(), new CropUtil.CropListener() {
-                            @Override
-                            public void callback(Bitmap bitmap) {
-                                titleImg.setImageBitmap(bitmap);
-                            }
-                        });
+                        CropUtil.getInstance().cropImg(context, skinName, list.get(index).getOriginSkin(), bitmap -> titleImg.setImageBitmap(bitmap));
                     } else {
                         MGlideUtil.load(context, list.get(index).getImgUrl(), titleImg);
                     }

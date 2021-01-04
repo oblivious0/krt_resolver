@@ -20,5 +20,8 @@ public class ViewValue {
      *横向进度条
      */
     public static final String LINEPROGRESS = "lineProgress";
+    public static final String INPUT = "input";
+    public static final String SELECTLIST = "selectList";
+    public static final String SCROLLLABEL = "scrollLabel";
 
 }

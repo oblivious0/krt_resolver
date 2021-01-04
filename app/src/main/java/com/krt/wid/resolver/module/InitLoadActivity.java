@@ -39,8 +39,7 @@ public class InitLoadActivity extends BaseInitLoadActivity {
 
     String krtCode, krtVer;
 
-    MVersionBean.VersionInfoBean versionInfoBean;
-    AppInfoBean appInfoBean = null;
+    MVersionBean.VersionInfoBean infoBean;
 
     @Override
     protected void beforeBindLayout() {
@@ -116,16 +115,20 @@ public class InitLoadActivity extends BaseInitLoadActivity {
         if (resourceNameView() != null)
             resourceNameView().setText("版本信息获取中...");
 
-        OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion2"))
+        OkGo.<Result<List<MVersionBean.VersionInfoBean>>>get(Constants.getUrl("getVersionList"))
                 .params("tag", krtCode)
-                .params("terminalCode", 1)
-                .params("terminalVersion", TERMINAL_VERSION)
-                .params("interpreterCode", COMPILER_VERSION)
-                .execute(new MCallBack<Result<MVersionBean>>(this, false) {
+                .params("pageSize", 1)
+                .params("currentPage", 0)
+                .params("version", krtVer)
+                .params("t", System.currentTimeMillis())
+                .execute(new MCallBack<Result<List<MVersionBean.VersionInfoBean>>>(this, false) {
                     @Override
-                    public void onSuccess(Response<Result<MVersionBean>> response) {
+                    public void onSuccess(Response<Result<List<MVersionBean.VersionInfoBean>>> response) {
                         if (response.body().isSuccess()) {
-                            mVersionBean = response.body().data;
+                            if (response.body().data != null && response.body().data.size() != 0) {
+                                infoBean = response.body().data.get(0);
+                                appInfoBean = ParseJsonUtil.getBean(infoBean.getApp_info(), AppInfoBean.class);
+                            }
                             checkRes();
                         } else {
                             if (resourceNameView() != null)
@@ -134,39 +137,42 @@ public class InitLoadActivity extends BaseInitLoadActivity {
                             finish();
                         }
                     }
-
-                    @Override
-                    public void onError(Response<Result<MVersionBean>> response) {
-                        super.onError(response);
-                    }
                 });
     }
 
     @Override
     protected void checkRes() {
 
-//        for ( : mVersionBean.getInterpreter_last_version()) {
-        versionInfoBean = mVersionBean.getInterpreter_last_version();
-        if (krtVer.equals(versionInfoBean.getVersion())) {
-            appInfoBean = ParseJsonUtil.getBean(versionInfoBean.getApp_info(), AppInfoBean.class);
-            mDownloads.add(versionInfoBean.getBase_skin());
-            mDownloads.add(versionInfoBean.getCustom_skin());
-
-            MProConfig.build()
-                    .setKrtCode(krtCode)
-                    .setFragmentClz(BaseFragment.class)
-                    .setIsPublish(versionInfoBean.getIs_publish())
-                    .generate();
-            MProConfig.btx_json_name = appInfoBean.getStartPageId();
-//                break;
-        }
-
-
-        if (versionInfoBean == null) {
+        if (infoBean == null) {
             MToast.showToast(this, "未检测到可用版本");
             finish();
             return;
         }
+
+        if (!TextUtils.isEmpty(infoBean.getBase_skin())) {
+            String[] area = infoBean.getBase_skin().split("/");
+            String fileName = area[area.length - 1];
+            mDownloads.add(infoBean.getBase_skin());
+            downKeys.add(fileName);
+            if (Integer.parseInt(infoBean.getInterpreter_code()) < 4)
+                MProConfig.skin_name = fileName;
+        }
+
+        if (!TextUtils.isEmpty(infoBean.getCustom_skin())) {
+            String[] area = infoBean.getCustom_skin().split("/");
+            String fileName = area[area.length - 1];
+            mDownloads.add(infoBean.getCustom_skin());
+            downKeys.add(fileName);
+            if (Integer.parseInt(infoBean.getInterpreter_code()) >= 4)
+                MProConfig.skin_name = fileName;
+        }
+
+        MProConfig.build()
+                .setKrtCode(krtCode)
+                .setFragmentClz(BaseFragment.class)
+                .setIsPublish(infoBean.getIs_publish())
+                .generate();
+        MProConfig.btx_json_name = appInfoBean.getStartPageId();
 
         if (appInfoBean != null) {
             AppLibManager.defaultPath = appInfoBean.getDefaultPath();
@@ -185,29 +191,30 @@ public class InitLoadActivity extends BaseInitLoadActivity {
                 .params("tag", krtCode)
                 .params("currentPage", 0)
                 .params("version", krtVer)
+                .params("t", System.currentTimeMillis())
                 .execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
-                            @Override
-                            public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
-                                if (response.body().isSuccess()) {
-                                    List<MPageInfoBean> list = response.body().data;
-                                    for (MPageInfoBean bean : list) {
-                                        md5CodeMap.put(bean.getPage_config_md5(), bean);
-                                    }
-                                    loadResList();
-                                } else {
-                                    if (resourceNameView() != null)
-                                        resourceNameView().setText("界面清单获取失败");
-
-                                    gotoMainActivity();
-                                }
+                    @Override
+                    public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
+                        if (response.body().isSuccess()) {
+                            List<MPageInfoBean> list = response.body().data;
+                            for (MPageInfoBean bean : list) {
+                                md5CodeMap.put(bean.getPage_config_md5(), bean);
                             }
+                            loadResList();
+                        } else {
+                            if (resourceNameView() != null)
+                                resourceNameView().setText("界面清单获取失败");
 
-                            @Override
-                            public void onError(Response<Result<List<MPageInfoBean>>> response) {
-                                super.onError(response);
-                                gotoMainActivity();
-                            }
-                        });
+                            gotoMainActivity();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<Result<List<MPageInfoBean>>> response) {
+                        super.onError(response);
+                        gotoMainActivity();
+                    }
+                });
 
     }
 

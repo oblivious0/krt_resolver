@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
@@ -52,6 +53,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
 
     protected MVersionBean mVersionBean;
     protected List<String> mDownloads = new ArrayList<>();
+    protected List<String> downKeys = new ArrayList<>();
     protected List<File> files;
     protected AppInfoBean appInfoBean;
 
@@ -108,6 +110,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                 .params("terminalVersion", TERMINAL_VERSION)
                 .params("interpreterCode", COMPILER_VERSION)
                 .params("is_publish", MProConfig.getInstance().getIs_publish())
+                .params("t", System.currentTimeMillis())
                 .execute(new MCallBack<Result<MVersionBean>>(this, false) {
                     @Override
                     public void onSuccess(Response<Result<MVersionBean>> response) {
@@ -138,27 +141,44 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
         if (mVersionBean.getInterpreter_last_version() != null) {
             appInfoBean = ParseJsonUtil.getBean
                     (mVersionBean.getInterpreter_last_version().getApp_info(), AppInfoBean.class);
-            mDownloads.add(mVersionBean.getInterpreter_last_version().getBase_skin());
-            mDownloads.add(mVersionBean.getInterpreter_last_version().getCustom_skin());
-            url = mVersionBean.getInterpreter_last_version().getBase_skin();
-        }
-        else {
+
+            if (!TextUtils.isEmpty(mVersionBean.getInterpreter_last_version().getBase_skin())) {
+                String[] area = mVersionBean.getInterpreter_last_version().getBase_skin().split("/");
+                String fileName = area[area.length - 1];
+                mDownloads.add(mVersionBean.getInterpreter_last_version().getBase_skin());
+                downKeys.add(fileName);
+            }
+
+            if (!TextUtils.isEmpty(mVersionBean.getInterpreter_last_version().getCustom_skin())) {
+                String[] area = mVersionBean.getInterpreter_last_version().getCustom_skin().split("/");
+                String fileName = area[area.length - 1];
+                mDownloads.add(mVersionBean.getInterpreter_last_version().getCustom_skin());
+                downKeys.add(fileName);
+            }
+            if (Integer.parseInt(COMPILER_VERSION) < 4)
+                url = mVersionBean.getInterpreter_last_version().getBase_skin();
+            else
+                url = mVersionBean.getInterpreter_last_version().getCustom_skin();
+        } else {
             appInfoBean = ParseJsonUtil.getBean
                     (mVersionBean.getLast_version().getApp_info(), AppInfoBean.class);
-            mDownloads.add(mVersionBean.getLast_version().getBase_skin());
-            mDownloads.add(mVersionBean.getLast_version().getCustom_skin());
-            url = mVersionBean.getLast_version().getBase_skin();
-//            for (MVersionBean.VersionInfoBean versionInfoBean : mVersionBean.getInterpreter_enable_version()) {
-//                if (versionInfoBean.getIs_publish() == MProConfig.getInstance().getIs_publish() &&
-//                        Integer.parseInt(versionInfoBean.getInterpreter_code()) >= Integer.parseInt(COMPILER_VERSION)) {
-//                    appInfoBean = ParseJsonUtil.getBean
-//                            (versionInfoBean.getApp_info(), AppInfoBean.class);
-//                    mDownloads.add(versionInfoBean.getBase_skin());
-//                    mDownloads.add(versionInfoBean.getCustom_skin());
-//                    url = versionInfoBean.getBase_skin();
-//                    break;
-//                }
-//            }
+            if (!TextUtils.isEmpty(mVersionBean.getLast_version().getBase_skin())) {
+                String[] area = mVersionBean.getLast_version().getBase_skin().split("/");
+                String fileName = area[area.length - 1];
+                mDownloads.add(mVersionBean.getLast_version().getBase_skin());
+                downKeys.add(fileName);
+            }
+
+            if (!TextUtils.isEmpty(mVersionBean.getLast_version().getCustom_skin())) {
+                String[] area = mVersionBean.getLast_version().getCustom_skin().split("/");
+                String fileName = area[area.length - 1];
+                mDownloads.add(mVersionBean.getLast_version().getCustom_skin());
+                downKeys.add(fileName);
+            }
+            if (Integer.parseInt(COMPILER_VERSION) < 4)
+                url = mVersionBean.getLast_version().getBase_skin();
+            else
+                url = mVersionBean.getLast_version().getCustom_skin();
         }
 
         if (appInfoBean != null) {
@@ -185,6 +205,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                 .params("pageSize", 100)
                 .params("tag", MProConfig.getInstance().getKrt_pro_code())
                 .params("currentPage", 0)
+                .params("t", System.currentTimeMillis())
                 .params("version", mVersionBean.getInterpreter_last_version() == null
                         ? mVersionBean.getLast_version().getVersion()
                         : mVersionBean.getInterpreter_last_version().getVersion())
@@ -222,6 +243,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             resourceNameView().setText("正在检查资源列表...");
 
         OkGo.<Result<List<MResourceBean>>>get(Constants.getUrl("getProjectRes"))
+                .params("t", System.currentTimeMillis())
                 .params("tag", MProConfig.getInstance().getKrt_pro_code())
                 .execute(new MCallBack<Result<List<MResourceBean>>>(this, false) {
                     @Override
@@ -234,8 +256,9 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                                 }
                             }
                             filterResLoad();
+                        } else {
+                            gotoMainActivity();
                         }
-                        gotoMainActivity();
                     }
                 });
     }
@@ -253,24 +276,28 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
         if (resourceNameView() != null)
             resourceNameView().setText("正在检查更新...");
 
-        for (int i = 0; i < files.size(); i++) {
-            //过滤掉不需要更新的文件
-            String s = EncryptUtils.encryptMD5File2String(files.get(i));
-            String json = Util.getJson(files.get(i));
-            String s1 = EncryptUtils.encryptMD5ToString(json);
-//            LogUtils.e(files.get(i).getName() + ":" + s + "---" + s1);
-            md5CodeMap.remove(s.toLowerCase());
-            resMap.remove(files.get(i).getName());
-        }
-
         for (String pageId : md5CodeMap.keySet()) {
-            String filePath = Constants.path + md5CodeMap.get(pageId).getPage_code() + ".json";
-            FileUtils.createFileByDeleteOldFile(filePath);
-            FileIOUtils.writeFileFromString(filePath, md5CodeMap.get(pageId).getPage_config());
+            if (MProConfig.getInstance().getIs_publish().equals("-1") ||
+                    MProConfig.getInstance().getIs_publish().equals("0")) {
+                String filePath = Constants.path + md5CodeMap.get(pageId).getPage_code() + ".json";
+                FileUtils.createFileByDeleteOldFile(filePath);
+                FileIOUtils.writeFileFromString(filePath, md5CodeMap.get(pageId).getPage_config());
+            } else {
+                if (md5CodeMap.get(pageId).getFile_url() != null) {
+                    mDownloads.add(md5CodeMap.get(pageId).getFile_url());
+                    downKeys.add(md5CodeMap.get(pageId).getPage_code() + ".json");
+                }
+            }
         }
 
         for (MResourceBean bean : resMap.values()) {
-            mDownloads.add(bean.getImage_url());
+            if (!TextUtils.isEmpty(bean.getImage_url())) {
+                String[] area = bean.getImage_url().split("/");
+                String fileName = area[area.length - 1];
+
+                mDownloads.add(bean.getImage_url());
+                downKeys.add(fileName);
+            }
         }
 
         down();
@@ -287,19 +314,18 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
         if (resourceNameView() != null)
             resourceNameView().setText("资源加载中...");
 
+
         String url = mDownloads.get(0);
-
-        String[] area = url.split("/");
-        String fileName = area[area.length - 1];
-
+        String page = downKeys.get(0);
 
         OkGo.<File>get(url)
-                .execute(new FileCallback(Constants.basePath, fileName) {
+                .execute(new FileCallback(Constants.basePath, page) {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(Response<File> response) {
                         if (response.isSuccessful()) {
                             mDownloads.remove(0);
+                            downKeys.remove(0);
                             down();
                         } else {
                             if (resourceNameView() != null)

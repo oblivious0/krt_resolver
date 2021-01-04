@@ -1,13 +1,13 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.combination;
 
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
 import com.wid.applib.view.CountDown;
+import com.wid.applib.widget.BaseView;
 
 
 /**

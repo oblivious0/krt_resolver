@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.base;
 
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
@@ -15,13 +15,13 @@ import androidx.core.content.ContextCompat;
 import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.imp.ContextImp;
-import com.wid.applib.util.ColorUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 
 /**
  * @author xzy
- * @package com.wid.applib.view.widget
+ * @package com.wid.applib.widget
  * @description 横向进度条
  * @time 2020/11/27
  */

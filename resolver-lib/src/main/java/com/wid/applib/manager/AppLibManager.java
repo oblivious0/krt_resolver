@@ -3,7 +3,6 @@ package com.wid.applib.manager;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.wid.applib.bean.AjaxBean;
@@ -18,9 +17,8 @@ import com.wid.applib.imp.ContextImp;
 import com.wid.applib.tool.ModuleViewFactory;
 import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.SpUtil;
-import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.widget.BaseView;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

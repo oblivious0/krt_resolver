@@ -46,7 +46,11 @@ public class MProConfig {
         }
 
         public Builder setIsPublish(String val) {
-            isPublish = val;
+            if (val==null){
+                isPublish = "-1";
+            }else {
+                isPublish = val;
+            }
             return this;
         }
 

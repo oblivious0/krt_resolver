@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.wid.applib.R;
 import com.wid.applib.bean.AjaxBean;
@@ -22,7 +22,7 @@ import com.wid.applib.exception.ModuleJsonParseException;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.AppLibManager;
 import com.wid.applib.util.Util;
-import com.wid.applib.view.widget.BaseView;
+import com.wid.applib.widget.BaseView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -112,6 +112,8 @@ public abstract class BaseModuleActivity extends AppCompatActivity implements Co
                                 public void initElement() {
                                     List<ParamBean> paramBeanList = ParseJsonUtil.getBeanList(
                                             getIntent().getStringExtra("param"), ParamBean.class);
+
+                                    if (paramBeanList==null) return;
                                     for (ParamBean bean : paramBeanList) {
                                         commonElementContainer.put(bean.getKey(), bean.getVal());
                                     }

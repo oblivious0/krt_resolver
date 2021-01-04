@@ -1,4 +1,4 @@
-package com.wid.applib.view.widget;
+package com.wid.applib.widget.list;
 
 import android.app.Activity;
 import android.text.TextUtils;
@@ -8,6 +8,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.lzy.okgo.model.Response;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.http.MJsonConvert;
@@ -17,6 +19,7 @@ import com.wid.applib.http.AjaxUtil;
 import com.wid.applib.util.BindDataUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
+import com.wid.applib.widget.BaseView;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerAdapter;
 import com.youth.banner.config.IndicatorConfig;
@@ -28,7 +31,6 @@ import java.util.List;
 
 import krt.wid.bean.event.MEventBean;
 import krt.wid.http.MCallBack;
-import krt.wid.http.Result;
 import krt.wid.util.MConstants;
 import krt.wid.util.ParseJsonUtil;
 
@@ -41,6 +43,7 @@ public class BannerView extends BaseView<Banner> {
 
     private List<Object> list;
     private ImageAdapter adapter;
+    private String data = "";
 
     public BannerView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
@@ -79,6 +82,32 @@ public class BannerView extends BaseView<Banner> {
                 @Override
                 public void onSuccess(Response<MResult> response) {
                     if (response.body().code == 200) {
+
+
+                        try {
+                            data = ParseJsonUtil.toJson(response.body().data);
+                            String[] str = bean.getAjax().get(0).getBindData().get(0).getBindKeys();
+                            String currentData = data;
+                            for (int i = 1; i < str.length; i++) {
+                                switch (str[i]) {
+                                    case "data":
+                                        currentData = ParseJsonUtil.getStringByKey(currentData, "data");
+                                        break;
+                                    case "Array":
+                                    case "array":
+                                        String res = JSON.toJSON(currentData).toString();
+                                        list = JSONArray.parseArray(res, Object.class);
+                                        return;
+                                    default:
+                                }
+                            }
+                        } catch (Exception e) {
+                            //data%krt_data%krt_Array%krt_familySum
+
+                        } finally {
+                            adapter.setDatas(list);
+                            adapter.notifyDataSetChanged();
+                        }
                         list = ParseJsonUtil.getBeanList(
                                 ParseJsonUtil.toJson(response.body().data), Object.class);
                         adapter.setDatas(list);

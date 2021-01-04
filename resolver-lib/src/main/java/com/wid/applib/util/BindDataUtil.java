@@ -1,24 +1,17 @@
 package com.wid.applib.util;
 
 import android.annotation.SuppressLint;
-import android.view.View;
 import android.widget.FrameLayout;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.wid.applib.R;
 import com.wid.applib.bean.BaseLayoutBean;
 import com.wid.applib.bean.BindDataBean;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.tool.ModuleViewFactory;
 import com.wid.applib.tool.PropertyBindTool;
-import com.wid.applib.view.widget.BaseView;
-import com.wid.applib.view.widget.LayoutView;
+import com.wid.applib.widget.BaseView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
 
 
 /**
@@ -74,7 +67,7 @@ public class BindDataUtil {
     }
 
     @SuppressLint("CheckResult")
-    public static void bindListDatas(BaseLayoutBean bean, ContextImp imp, FrameLayout frameLayout, Object item) {
+    public static List<BaseView> bindListDatas(BaseLayoutBean bean, ContextImp imp, FrameLayout frameLayout, Object item) {
         List<BindDataBean> bindDatas = new ArrayList<>();
         List<BaseView> views = new ArrayList<>();
         frameLayout.removeAllViews();
@@ -86,7 +79,7 @@ public class BindDataUtil {
             bindDatas.addAll(bean.getStaticData().getBindData());
         }
 
-        if (bindDatas.size() == 0) return;
+        if (bindDatas.size() == 0) return views;
 
         for (BaseView baseV : views) {
             for (int j = 0; j < bindDatas.size(); j++) {
@@ -95,5 +88,7 @@ public class BindDataUtil {
                 baseV.bindData(util.getCid(), util.getViewProperty(), val);
             }
         }
+
+        return views;
     }
 }
