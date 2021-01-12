@@ -56,6 +56,7 @@ public class MVersionBean {
         private String publish_time;
         private String base_skin;   //主题皮肤文件
         private String custom_skin; //其他皮肤文件
+        private String skin_version;
 
         /* -- 2版本解析器追加 -- */
         //发布状态：-1测试版，0开发版，1体验版，2发布版，3历史发布版
@@ -77,6 +78,14 @@ public class MVersionBean {
          *      "defaultPath":0
          * }"
          */
+
+        public String getSkin_version() {
+            return skin_version;
+        }
+
+        public void setSkin_version(String skin_version) {
+            this.skin_version = skin_version;
+        }
 
         public String getIs_publish() {
             return is_publish;

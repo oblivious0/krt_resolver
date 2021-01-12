@@ -83,9 +83,9 @@ public class LayoutView extends BaseView<FrameLayout> {
 
     @Override
     public void bindData(String cid, String key, String val) {
-        if (cid.equals(this.cid)) {
-
-        }
+//        if (cid.equals(this.cid)) {
+//
+//        }
 
         if (childViews.size() != 0) {
             for (BaseView baseV : childViews) {

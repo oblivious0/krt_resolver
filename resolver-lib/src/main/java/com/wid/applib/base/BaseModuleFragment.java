@@ -101,7 +101,7 @@ public abstract class BaseModuleFragment extends Fragment implements ContextImp 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         isPrepared = true;
-        return inflater.inflate(R.layout.fragment_module, container, false);
+        return inflater.inflate(R.layout.layout_module, container, false);
     }
 
     @Override

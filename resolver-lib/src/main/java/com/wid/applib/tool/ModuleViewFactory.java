@@ -11,6 +11,7 @@ import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.ViewValue;
 import com.wid.applib.widget.base.InputView;
 import com.wid.applib.widget.base.ScorllLabelView;
+import com.wid.applib.widget.combination.WeatherView;
 import com.wid.applib.widget.list.BannerView;
 import com.wid.applib.widget.BaseView;
 import com.wid.applib.widget.base.ButtonView;
@@ -92,6 +93,10 @@ public class ModuleViewFactory {
                     break;
                 case ViewValue.SCROLLLABEL:
                     baseView = new ScorllLabelView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.WEATHER:
+                    baseView = new WeatherView(contextImp, bean, isChild);
+                    break;
                 default:
                     if (contextImp.getConvertTool() != null) {
                         baseView = contextImp.getConvertTool().convert(type, bean, isChild);

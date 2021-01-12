@@ -107,14 +107,10 @@ public class BottomLayout extends LinearLayout {
         String json = Util.getJson(resFile);
         if (TextUtils.isEmpty(json)) {
             Log.w(MLib.TAG, "app底部菜单配置有误");
+            return;
         }
         bottomBean = ParseJsonUtil.getBean(json, BottomBean.class);
-        String skinPath = bottomBean.getCommon().getSkinName();
-        if (skinPath != null && !TextUtils.isEmpty(skinPath.trim())) {
-            skinName = skinPath.substring(skinPath.lastIndexOf("/"));
-        } else {
-            skinName = MProConfig.skin_name;
-        }
+        skinName = MProConfig.skin_name;
         allList = bottomBean.getCommon().getLinks();
         if (!TextUtils.isEmpty(bottomBean.getCommon().getSkinName())) {
             String[] names = bottomBean.getCommon().getSkinName().split("/");
@@ -122,11 +118,10 @@ public class BottomLayout extends LinearLayout {
         }
         try {
             initFragment();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+
         CropUtil.getInstance().cropBottomImg(context, list, new File(Constants.path + skinName), () -> initIndicator());
         addViewPager();
         addIndicator();
@@ -159,8 +154,9 @@ public class BottomLayout extends LinearLayout {
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).isIfSelect()) selectPos = i;
                 Fragment fragment = null;
-                //源生界面
+                //源生界面2
                 if (list.get(i).isIfModulePage()) {
+//                    Class.forName()
                     fragment = clazz.newInstance().setJsonFile(list.get(i).getPageId());
                 } else {
                     fragment = imp.instanceFragment(i, list.get(i).getUrl());

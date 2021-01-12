@@ -53,9 +53,9 @@ public class AjaxUtil {
         switch (MProConfig.getInstance().getIs_publish()) {
             case MLib.VER_TEST:
             case MLib.VER_ALPHA:
-            case MLib.VER_BETA:
                 url = AppLibManager.getBetaPath(bean.getBasePathIdx());
                 break;
+            case MLib.VER_BETA:
             case MLib.VER_OFFICIAL:
             case MLib.VER_HISTORY:
                 url = AppLibManager.getBasePath(bean.getBasePathIdx());

@@ -23,5 +23,6 @@ public class ViewValue {
     public static final String INPUT = "input";
     public static final String SELECTLIST = "selectList";
     public static final String SCROLLLABEL = "scrollLabel";
+    public static final String WEATHER = "weather";
 
 }

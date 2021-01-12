@@ -72,6 +72,42 @@ public class CommonBean {
     private boolean stripedActive;
     private List<String> rightEvent;
     private String highLightId;
+    private String cityNameId;
+    private String weatherTextId;
+    private String temperatureId;
+    private String iconId;
+
+    public String getCityNameId() {
+        return cityNameId;
+    }
+
+    public void setCityNameId(String cityNameId) {
+        this.cityNameId = cityNameId;
+    }
+
+    public String getWeatherTextId() {
+        return weatherTextId;
+    }
+
+    public void setWeatherTextId(String weatherTextId) {
+        this.weatherTextId = weatherTextId;
+    }
+
+    public String getTemperatureId() {
+        return temperatureId;
+    }
+
+    public void setTemperatureId(String temperatureId) {
+        this.temperatureId = temperatureId;
+    }
+
+    public String getIconId() {
+        return iconId;
+    }
+
+    public void setIconId(String iconId) {
+        this.iconId = iconId;
+    }
 
     public String getHighLightId() {
         return highLightId;

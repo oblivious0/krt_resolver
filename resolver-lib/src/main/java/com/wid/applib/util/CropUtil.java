@@ -47,22 +47,25 @@ public class CropUtil {
                     if (TextUtils.isEmpty(linksBean.getOriginSkin())) {
                         return new Object();
                     }
-                    Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-                    String[] origin = linksBean.getOriginSkin().split("_");
-                    Bitmap originImg = Bitmap.createBitmap(bitmap,
-                            Integer.parseInt(origin[2]) > 1 ? Integer.parseInt(origin[2]) - 1 : Integer.parseInt(origin[2]),
-                            Integer.parseInt(origin[3]),
-                            Integer.parseInt(origin[0]) - 1,
-                            Integer.parseInt(origin[1]) - 1);
-                    String[] select = linksBean.getSelectSkin().split("_");
-                    Bitmap selectImg = Bitmap.createBitmap(bitmap,
-                            Integer.parseInt(select[2]) > 1 ? Integer.parseInt(select[2]) - 1 : Integer.parseInt(select[2]),
-                            Integer.parseInt(select[3]),
-                            Integer.parseInt(select[0]) - 1,
-                            Integer.parseInt(select[1]) - 1);
-                    linksBean.setOriginImg(saveBitmap(originImg, linksBean.getOriginSkin() + ".png"));
-                    linksBean.setSelectImg(saveBitmap(selectImg, linksBean.getSelectSkin() + ".png"));
+                    if (linksBean.isSkinIcon()) {
+                        LogUtils.e(file.getPath());
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+                        String[] origin = linksBean.getOriginSkin().split("_");
+                        Bitmap originImg = Bitmap.createBitmap(bitmap,
+                                Integer.parseInt(origin[2]) > 1 ? Integer.parseInt(origin[2]) - 1 : Integer.parseInt(origin[2]),
+                                Integer.parseInt(origin[3]),
+                                Integer.parseInt(origin[0]) - 1,
+                                Integer.parseInt(origin[1]) - 1);
+                        String[] select = linksBean.getSelectSkin().split("_");
+                        Bitmap selectImg = Bitmap.createBitmap(bitmap,
+                                Integer.parseInt(select[2]) > 1 ? Integer.parseInt(select[2]) - 1 : Integer.parseInt(select[2]),
+                                Integer.parseInt(select[3]),
+                                Integer.parseInt(select[0]) - 1,
+                                Integer.parseInt(select[1]) - 1);
+                        linksBean.setOriginImg(saveBitmap(originImg, linksBean.getOriginSkin() + ".png"));
+                        linksBean.setSelectImg(saveBitmap(selectImg, linksBean.getSelectSkin() + ".png"));
 
+                    }
                     return new Object();
                 })
                 .subscribeOn(Schedulers.io())
@@ -95,7 +98,6 @@ public class CropUtil {
     @SuppressLint("checkResult")
     public void cropImg(final Context context, final String name, final String content, final CropListener listener) {
         final File file = new File(Constants.path + name);
-        LogUtils.e(Constants.path + name);
         if (!file.exists()) return;
         Observable.create((ObservableOnSubscribe<Bitmap>) emitter -> {
             try {
@@ -103,9 +105,10 @@ public class CropUtil {
                 String[] contents = content.split("_");
                 Bitmap cropImg = Bitmap.createBitmap(bitmap,
                         Integer.parseInt(contents[2]),
-                        Integer.parseInt(contents[3]),
+                        Integer.parseInt(contents[3]) != 0 ? Integer.parseInt(contents[3]) - 1 :
+                                Integer.parseInt(contents[3]),
                         Integer.parseInt(contents[0]),
-                        Integer.parseInt(contents[1]) - 1);
+                        Integer.parseInt(contents[1]));
                 emitter.onNext(cropImg);
             } catch (Exception e) {
                 e.printStackTrace();

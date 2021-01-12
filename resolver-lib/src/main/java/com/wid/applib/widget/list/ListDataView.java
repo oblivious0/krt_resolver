@@ -67,15 +67,14 @@ public class ListDataView extends BaseView<MRecyclerView> {
         }
         view = new MRecyclerView(contextImp.getContext(), str);
 
-
+        //当为列表页时，长度拉满留余一小部分，且置顶
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(FrameLayout.LayoutParams.MATCH_PARENT)
-//                .setHeight(bean.getCommon().getHeight() == 800 ? FrameLayout.LayoutParams.MATCH_PARENT : bean.getCommon().getHeight())
                 .setHeight(contextImp.getPageType().equals("list") ?
                         ((Activity) contextImp.getContext()).getWindowManager().getDefaultDisplay().getHeight() - 60
                         : bean.getCommon().getHeight())
                 .setMarginLeft(bean.getCommon().getX())
-                .setMarginTop(bean.getCommon().getY())
+                .setMarginTop(contextImp.getPageType().equals("list") ? 0 : bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
 
@@ -194,6 +193,10 @@ public class ListDataView extends BaseView<MRecyclerView> {
             }
         }
         return 10;
+    }
+
+    public BaseQuickAdapter<Object, BaseViewHolder> getAdapter() {
+        return (BaseQuickAdapter<Object, BaseViewHolder>) view.getAdapter();
     }
 
     private class ListAdapter extends BaseQuickAdapter<Object, BaseViewHolder> {

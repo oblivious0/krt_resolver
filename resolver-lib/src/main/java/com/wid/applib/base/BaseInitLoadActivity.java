@@ -110,6 +110,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                 .params("terminalVersion", TERMINAL_VERSION)
                 .params("interpreterCode", COMPILER_VERSION)
                 .params("is_publish", MProConfig.getInstance().getIs_publish())
+//                .params("version", "13")
                 .params("t", System.currentTimeMillis())
                 .execute(new MCallBack<Result<MVersionBean>>(this, false) {
                     @Override
@@ -137,24 +138,11 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
      */
     protected void checkRes() {
 
-        String url = "";
-        if (mVersionBean.getInterpreter_last_version() != null) {
+        String url = "", ver = "";
+        if (mVersionBean.getInterpreter_last_version() != null && mVersionBean.getInterpreter_last_version().getVersion() != null) {
             appInfoBean = ParseJsonUtil.getBean
                     (mVersionBean.getInterpreter_last_version().getApp_info(), AppInfoBean.class);
-
-            if (!TextUtils.isEmpty(mVersionBean.getInterpreter_last_version().getBase_skin())) {
-                String[] area = mVersionBean.getInterpreter_last_version().getBase_skin().split("/");
-                String fileName = area[area.length - 1];
-                mDownloads.add(mVersionBean.getInterpreter_last_version().getBase_skin());
-                downKeys.add(fileName);
-            }
-
-            if (!TextUtils.isEmpty(mVersionBean.getInterpreter_last_version().getCustom_skin())) {
-                String[] area = mVersionBean.getInterpreter_last_version().getCustom_skin().split("/");
-                String fileName = area[area.length - 1];
-                mDownloads.add(mVersionBean.getInterpreter_last_version().getCustom_skin());
-                downKeys.add(fileName);
-            }
+            ver = mVersionBean.getInterpreter_last_version().getSkin_version();
             if (Integer.parseInt(COMPILER_VERSION) < 4)
                 url = mVersionBean.getInterpreter_last_version().getBase_skin();
             else
@@ -162,19 +150,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
         } else {
             appInfoBean = ParseJsonUtil.getBean
                     (mVersionBean.getLast_version().getApp_info(), AppInfoBean.class);
-            if (!TextUtils.isEmpty(mVersionBean.getLast_version().getBase_skin())) {
-                String[] area = mVersionBean.getLast_version().getBase_skin().split("/");
-                String fileName = area[area.length - 1];
-                mDownloads.add(mVersionBean.getLast_version().getBase_skin());
-                downKeys.add(fileName);
-            }
-
-            if (!TextUtils.isEmpty(mVersionBean.getLast_version().getCustom_skin())) {
-                String[] area = mVersionBean.getLast_version().getCustom_skin().split("/");
-                String fileName = area[area.length - 1];
-                mDownloads.add(mVersionBean.getLast_version().getCustom_skin());
-                downKeys.add(fileName);
-            }
+            ver = mVersionBean.getLast_version().getSkin_version();
             if (Integer.parseInt(COMPILER_VERSION) < 4)
                 url = mVersionBean.getLast_version().getBase_skin();
             else
@@ -195,6 +171,14 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             String[] area = url.split("/");
             String fileName = area[area.length - 1];
             MProConfig.skin_name = fileName;
+            String current = AppLibManager.getStorageVal("skinVer", this);
+            if (!ver.equals(current)) {
+                mDownloads.add(url);
+                downKeys.add(fileName);
+                AppLibManager.putStorageVal("skinVer", ver, this);
+                //每次更新了皮肤文件，删除所有切图
+                FileUtils.deleteFilesInDir(Constants.path);
+            }
         }
 
         if (resourceNameView() != null)
