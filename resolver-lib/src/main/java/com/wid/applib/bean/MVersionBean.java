@@ -50,13 +50,18 @@ public class MVersionBean {
         this.interpreter_enable_version = interpreter_enable_version;
     }
 
-    public static class VersionInfoBean{
+    public static class VersionInfoBean {
         private String version;
         private String interpreter_code;
         private String publish_time;
         private String base_skin;   //主题皮肤文件
         private String custom_skin; //其他皮肤文件
         private String skin_version;
+
+        //skin_code（皮肤标识）、skin_icon
+        private String skin_code;
+        private String skin_icon;
+        private String skin_base64;
 
         /* -- 2版本解析器追加 -- */
         //发布状态：-1测试版，0开发版，1体验版，2发布版，3历史发布版
@@ -76,8 +81,32 @@ public class MVersionBean {
          *          }
          *      ],
          *      "defaultPath":0
-         * }"
+         * }
          */
+
+        public String getSkin_base64() {
+            return skin_base64;
+        }
+
+        public void setSkin_base64(String skin_base64) {
+            this.skin_base64 = skin_base64;
+        }
+
+        public String getSkin_code() {
+            return skin_code;
+        }
+
+        public void setSkin_code(String skin_code) {
+            this.skin_code = skin_code;
+        }
+
+        public String getSkin_icon() {
+            return skin_icon;
+        }
+
+        public void setSkin_icon(String skin_icon) {
+            this.skin_icon = skin_icon;
+        }
 
         public String getSkin_version() {
             return skin_version;

@@ -48,7 +48,6 @@ public class CropUtil {
                         return new Object();
                     }
                     if (linksBean.isSkinIcon()) {
-                        LogUtils.e(file.getPath());
                         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                         String[] origin = linksBean.getOriginSkin().split("_");
                         Bitmap originImg = Bitmap.createBitmap(bitmap,
@@ -97,7 +96,7 @@ public class CropUtil {
 
     @SuppressLint("checkResult")
     public void cropImg(final Context context, final String name, final String content, final CropListener listener) {
-        final File file = new File(Constants.path + name);
+        final File file = new File(Constants.path + name );
         if (!file.exists()) return;
         Observable.create((ObservableOnSubscribe<Bitmap>) emitter -> {
             try {

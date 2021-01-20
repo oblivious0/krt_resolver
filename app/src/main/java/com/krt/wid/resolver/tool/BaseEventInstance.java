@@ -59,7 +59,6 @@ public class BaseEventInstance extends MBaseEventListener {
         List<ParamBean> paramBeans = new ArrayList<>();
         for (ParamBean bodyParam : objects) {
             if ("props".equals(bodyParam.getSource()) || "variable".equals(bodyParam.getSource())) {
-
                 Object val = contextImp.getContainer("element")
                         .get(bodyParam.getVal());
                 paramBeans.add(new ParamBean(bodyParam.getKey(), val == null ? bodyParam.getVal() : val.toString()));

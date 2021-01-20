@@ -32,7 +32,7 @@ public class MProConfig {
     public static String skin_name;
     public static String btx_json_name;
     private String krt_pro_code;
-    private String is_publish;
+    private String is_publish = "-1";
     private String current_development;
 
     public static class Builder {

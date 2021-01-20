@@ -67,12 +67,11 @@ public class LayoutView extends BaseView<FrameLayout> {
         if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
             ModuleViewFactory.createViews(bean.getChildren(), contextImp, view, childViews, isListChild);
         }
-
+        view.setClipChildren(false);
     }
 
     @Override
     protected boolean bindInNewThread() {
-        view.setClipChildren(false);
         return true;
     }
 

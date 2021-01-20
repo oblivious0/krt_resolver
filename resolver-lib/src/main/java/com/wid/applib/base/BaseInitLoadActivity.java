@@ -2,6 +2,8 @@ package com.wid.applib.base;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -24,9 +28,11 @@ import com.wid.applib.bean.MResourceBean;
 import com.wid.applib.bean.MVersionBean;
 import com.wid.applib.config.MProConfig;
 import com.wid.applib.manager.AppLibManager;
+import com.wid.applib.skin.SkinManager;
 import com.wid.applib.util.Util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +62,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
     protected List<String> downKeys = new ArrayList<>();
     protected List<File> files;
     protected AppInfoBean appInfoBean;
+    protected MVersionBean.VersionInfoBean versionInfoBean;
 
     protected WeakHashMap<String, MPageInfoBean> md5CodeMap = new WeakHashMap<>();
     protected WeakHashMap<String, MResourceBean> resMap = new WeakHashMap<>();
@@ -69,18 +76,19 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
 
         initView();
 
+        File nomedia = new File(Constants.basePath, ".nomedia");
+        try {
+            if (!nomedia.exists()) nomedia.createNewFile();
+        } catch (IOException e) {
+            Log.e("IOException", "exception in createNewFile() method");
+        }
+
         MPermissions.getInstance().request(this, new String[]{
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE},
                 value -> {
                     if (value) {
 
-                        File nomedia = new File(Constants.basePath, ".nomedia");
-                        try {
-                            if (!nomedia.exists()) nomedia.createNewFile();
-                        } catch (IOException e) {
-                            Log.e("IOException", "exception in createNewFile() method");
-                        }
 
                         init();
 
@@ -109,6 +117,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                 .params("terminalCode", TERMINAL)
                 .params("terminalVersion", TERMINAL_VERSION)
                 .params("interpreterCode", COMPILER_VERSION)
+                .params("get_base64", "1")
                 .params("is_publish", MProConfig.getInstance().getIs_publish())
 //                .params("version", "13")
                 .params("t", System.currentTimeMillis())
@@ -137,24 +146,24 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
      * 检查资源清单
      */
     protected void checkRes() {
-
+        SkinManager.Builder builder = new SkinManager.Builder();
         String url = "", ver = "";
         if (mVersionBean.getInterpreter_last_version() != null && mVersionBean.getInterpreter_last_version().getVersion() != null) {
-            appInfoBean = ParseJsonUtil.getBean
-                    (mVersionBean.getInterpreter_last_version().getApp_info(), AppInfoBean.class);
-            ver = mVersionBean.getInterpreter_last_version().getSkin_version();
-            if (Integer.parseInt(COMPILER_VERSION) < 4)
-                url = mVersionBean.getInterpreter_last_version().getBase_skin();
-            else
-                url = mVersionBean.getInterpreter_last_version().getCustom_skin();
+            versionInfoBean = mVersionBean.getInterpreter_last_version();
         } else {
-            appInfoBean = ParseJsonUtil.getBean
-                    (mVersionBean.getLast_version().getApp_info(), AppInfoBean.class);
-            ver = mVersionBean.getLast_version().getSkin_version();
-            if (Integer.parseInt(COMPILER_VERSION) < 4)
-                url = mVersionBean.getLast_version().getBase_skin();
-            else
-                url = mVersionBean.getLast_version().getCustom_skin();
+            versionInfoBean = mVersionBean.getLast_version();
+        }
+
+        appInfoBean = ParseJsonUtil.getBean
+                (versionInfoBean.getApp_info(), AppInfoBean.class);
+        ver = versionInfoBean.getSkin_version();
+        if (Integer.parseInt(COMPILER_VERSION) < 4) {
+            url = versionInfoBean.getBase_skin();
+        } else {
+            url = versionInfoBean.getCustom_skin();
+            builder.setSkinCode(versionInfoBean.getSkin_code())
+                    .setSkinList(versionInfoBean.getSkin_icon())
+                    .generate();
         }
 
         if (appInfoBean != null) {
@@ -166,18 +175,38 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             MProConfig.btx_json_name = appInfoBean.getStartPageId();
         }
 
-//        MProConfig.skin_name = getBase_skin()
         if (!TextUtils.isEmpty(url)) {
             String[] area = url.split("/");
             String fileName = area[area.length - 1];
             MProConfig.skin_name = fileName;
             String current = AppLibManager.getStorageVal("skinVer", this);
-            if (!ver.equals(current)) {
+
+            //如果皮肤版本号不匹配或者皮肤文件不存在，需要重新下载
+            if (!ver.equals(current) || FileUtils.isDir(Constants.basePath + "/" + fileName)) {
                 mDownloads.add(url);
                 downKeys.add(fileName);
                 AppLibManager.putStorageVal("skinVer", ver, this);
                 //每次更新了皮肤文件，删除所有切图
                 FileUtils.deleteFilesInDir(Constants.path);
+            }
+        } else {
+            MProConfig.skin_name = "customSkin.png";
+            String base64 = versionInfoBean.getSkin_base64();
+            if (base64.contains("data:image/png;base64,")) {
+                String png = base64.replace("data:image/png;base64,", "");
+                byte[] img = EncodeUtils.base64Decode(png);
+                File f = new File(Constants.basePath + "/customSkin.png");
+                FileUtils.createFileByDeleteOldFile(f);
+                FileOutputStream fOut = null;
+                try {
+                    fOut = new FileOutputStream(f);
+                    ConvertUtils.bytes2Bitmap(img).compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                    fOut.flush();
+                    fOut.close();
+                } catch (Exception e) {
+
+                } finally {
+                }
             }
         }
 
@@ -190,9 +219,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                 .params("tag", MProConfig.getInstance().getKrt_pro_code())
                 .params("currentPage", 0)
                 .params("t", System.currentTimeMillis())
-                .params("version", mVersionBean.getInterpreter_last_version() == null
-                        ? mVersionBean.getLast_version().getVersion()
-                        : mVersionBean.getInterpreter_last_version().getVersion())
+                .params("version", versionInfoBean.getVersion())
                 .execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
                     @Override
                     public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
@@ -261,8 +288,8 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
             resourceNameView().setText("正在检查更新...");
 
         for (String pageId : md5CodeMap.keySet()) {
-            if (MProConfig.getInstance().getIs_publish().equals("-1") ||
-                    MProConfig.getInstance().getIs_publish().equals("0")) {
+            if ("-1".equals(MProConfig.getInstance().getIs_publish()) ||
+                    "0".equals(MProConfig.getInstance().getIs_publish())) {
                 String filePath = Constants.path + md5CodeMap.get(pageId).getPage_code() + ".json";
                 FileUtils.createFileByDeleteOldFile(filePath);
                 FileIOUtils.writeFileFromString(filePath, md5CodeMap.get(pageId).getPage_config());
@@ -308,9 +335,7 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Response<File> response) {
                         if (response.isSuccessful()) {
-                            mDownloads.remove(0);
-                            downKeys.remove(0);
-                            down();
+
                         } else {
                             if (resourceNameView() != null)
                                 resourceNameView().setText("资源加载失败【"
@@ -336,6 +361,14 @@ public abstract class BaseInitLoadActivity extends AppCompatActivity {
 
                         if (resourceDownProgressBar() != null)
                             resourceDownProgressBar().setProgress((int) (progress.fraction * 100));
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        super.onFinish();
+                        mDownloads.remove(0);
+                        downKeys.remove(0);
+                        down();
                     }
                 });
     }

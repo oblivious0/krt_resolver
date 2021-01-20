@@ -1,12 +1,18 @@
 package com.wid.applib.widget.combination;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.lzy.okgo.OkGo;
@@ -22,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import krt.wid.http.MCallBack;
+import krt.wid.util.MPermissions;
 import krt.wid.util.MToast;
 import krt.wid.util.ParseJsonUtil;
 
@@ -33,6 +40,8 @@ import krt.wid.util.ParseJsonUtil;
 public class WeatherView extends BaseView<FrameLayout> {
 
     public List<BaseView> childViews;
+    double lat;
+    double lng;
 
     public WeatherView(ContextImp imp, BaseLayoutBean obj) {
         super(imp, obj);
@@ -61,42 +70,40 @@ public class WeatherView extends BaseView<FrameLayout> {
         if (bean.getChildren() != null && !bean.getChildren().isEmpty()) {
             ModuleViewFactory.createViews(bean.getChildren(), contextImp, view, childViews, true);
         }
-
-        OkGo.get("https://restapi.amap.com/v3/weather/weatherInfo")
-                .params("city", "360702")
-                .params("key", "2be33124f87ba1f30d7d7a9ea462ed56")
-                .execute(new MCallBack<Object>((Activity) contextImp.getContext()) {
-                    @Override
-                    public void onSuccess(Response<Object> response) {
-                        String result = ParseJsonUtil.toJson(response.body());
-                        if (!ParseJsonUtil.getStringByKey(result, "infocode").equals("10000")) {
-                            MToast.showToast(contextImp.getContext(), "天气信息获取失败");
-                            return;
-                        }
-                        bindData(bean.getCommon().getCityNameId(), "city", ParseJsonUtil.getStringByKey(result, "city"));
-                        bindData(bean.getCommon().getWeatherTextId(), "weather", ParseJsonUtil.getStringByKey(result, "weather"));
-                        bindData(bean.getCommon().getTemperatureId(), "temperature", ParseJsonUtil.getStringByKey(result, "temperature"));
-                        bindData(bean.getCommon().getIconId(), "weatherIco", ParseJsonUtil.getStringByKey(result, "weather"));
-                    }
-                });
     }
 
     @Override
     protected boolean bindInNewThread() {
-        return false;
+        return true;
     }
 
     @Override
     protected void bindInMainThread() {
-        showWeather("");
+        MPermissions.getInstance().request((FragmentActivity) contextImp.getContext(),
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION}
+                , value -> {
+                    if (value) {
+                        String serviceString = Context.LOCATION_SERVICE;
+                        LocationManager locationManager =
+                                (LocationManager) contextImp.getContext().getSystemService(serviceString);
+                        String provider = LocationManager.GPS_PROVIDER;
+                        @SuppressLint("MissingPermission")
+                        Location location = locationManager.getLastKnownLocation(provider);
+                        lat = location.getLatitude();//获取纬度
+                        lng = location.getLongitude();//获取经度
+                        showWeather("");
+                    } else {
+                        MToast.showToast(contextImp.getContext(), "请在设置配置GPS定位权限");
+                    }
+                });
     }
 
     public void showWeather(String code) {
         if (TextUtils.isEmpty(code)) {
-
-            OkGo.get("https://restapi.amap.com/v3/geocode/regeo")
-                    .params("key", "2be33124f87ba1f30d7d7a9ea462ed56")
-                    .params("location", "")
+            OkGo.get("https://restapi.amap.com/v3/geocode/regeo?key=2be33124f87ba1f30d7d7a9ea462ed56&location=" + lng + "," + lat)
+//                    .params("key", "2be33124f87ba1f30d7d7a9ea462ed56")
+//                    .params("location", lat + "," + lng)
                     .execute(new MCallBack<Object>((Activity) contextImp.getContext()) {
                         @Override
                         public void onSuccess(Response<Object> response) {
@@ -114,8 +121,6 @@ public class WeatherView extends BaseView<FrameLayout> {
 
                         }
                     });
-
-            //https://restapi.amap.com/v3/geocode/regeo?key=2be33124f87ba1f30d7d7a9ea462ed56&location=114.932679,25.843159
         } else {
             OkGo.get("https://restapi.amap.com/v3/weather/weatherInfo")
                     .params("city", code)
@@ -128,10 +133,16 @@ public class WeatherView extends BaseView<FrameLayout> {
                                 MToast.showToast(contextImp.getContext(), "天气信息获取失败");
                                 return;
                             }
-                            bindData(bean.getCommon().getCityNameId(), "city", ParseJsonUtil.getStringByKey(result, "city"));
-                            bindData(bean.getCommon().getWeatherTextId(), "weather", ParseJsonUtil.getStringByKey(result, "weather"));
-                            bindData(bean.getCommon().getTemperatureId(), "temperature", ParseJsonUtil.getStringByKey(result, "temperature"));
-                            bindData(bean.getCommon().getIconId(), "weatherIco", ParseJsonUtil.getStringByKey(result, "weather"));
+
+                            String weather = ParseJsonUtil.toJson(
+                                    ParseJsonUtil.getBeanList(
+                                            ParseJsonUtil.getStringByKey(result, "lives"),
+                                            Object.class).get(0));
+
+                            bindData(bean.getCommon().getCityNameId(), "city", ParseJsonUtil.getStringByKey(weather, "city"));
+                            bindData(bean.getCommon().getWeatherTextId(), "weather", ParseJsonUtil.getStringByKey(weather, "weather"));
+                            bindData(bean.getCommon().getTemperatureId(), "temperature", ParseJsonUtil.getStringByKey(weather, "temperature"));
+                            bindData(bean.getCommon().getIconId(), "weatherIco", ParseJsonUtil.getStringByKey(weather, "weather"));
                         }
                     });
         }
@@ -141,14 +152,13 @@ public class WeatherView extends BaseView<FrameLayout> {
 
     @Override
     public void bindData(String cid, String key, String val) {
-
         if (childViews.size() != 0) {
             for (BaseView baseV : childViews) {
                 switch (key) {
+                    case "temperature":
                     case "city":
                     case "weather":
-                    case "temperature":
-                        baseV.bindData(cid, "text", val);
+                        baseV.bindData(cid, "text", "temperature".equals(key) ? val + "°C" : val);
                         break;
                     case "weatherIco":
                         baseV.bindData(cid, "src", getWeatherIco(val));

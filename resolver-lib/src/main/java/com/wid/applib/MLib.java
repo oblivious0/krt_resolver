@@ -21,7 +21,7 @@ public class MLib {
     /**
      * 当前解析器端版本
      */
-    public final static String TERMINAL_VERSION = "0";
+    public final static String TERMINAL_VERSION = "1";
 
     /**
      * 测试版

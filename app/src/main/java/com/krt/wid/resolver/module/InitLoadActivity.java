@@ -6,6 +6,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.krt.wid.resolver.R;
+import com.krt.wid.resolver.TestFragment;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.wid.applib.base.BaseInitLoadActivity;
@@ -25,6 +26,7 @@ import krt.wid.util.MToast;
 import krt.wid.util.ParseJsonUtil;
 
 import static com.wid.applib.MLib.COMPILER_VERSION;
+import static com.wid.applib.MLib.TERMINAL;
 import static com.wid.applib.MLib.TERMINAL_VERSION;
 
 /**
@@ -39,8 +41,6 @@ public class InitLoadActivity extends BaseInitLoadActivity {
 
     String krtCode, krtVer;
 
-    MVersionBean.VersionInfoBean infoBean;
-
     @Override
     protected void beforeBindLayout() {
 
@@ -51,6 +51,11 @@ public class InitLoadActivity extends BaseInitLoadActivity {
 
         krtCode = getIntent().getStringExtra("krtCode");
         krtVer = getIntent().getStringExtra("krtVer");
+        MProConfig.build()
+                .setKrtCode(krtCode)
+                .setFragmentClz(BaseFragment.class)
+                .generate();
+
         checkVer();
     }
 
@@ -115,132 +120,35 @@ public class InitLoadActivity extends BaseInitLoadActivity {
         if (resourceNameView() != null)
             resourceNameView().setText("版本信息获取中...");
 
-        OkGo.<Result<List<MVersionBean.VersionInfoBean>>>get(Constants.getUrl("getVersionList"))
+
+        OkGo.<Result<MVersionBean>>get(Constants.getUrl("getLastVersion2"))
                 .params("tag", krtCode)
-                .params("pageSize", 1)
-                .params("currentPage", 0)
+                .params("terminalCode", TERMINAL)
+                .params("terminalVersion", TERMINAL_VERSION)
+                .params("interpreterCode", COMPILER_VERSION)
                 .params("version", krtVer)
+                .params("get_base64", 1)
+//                .params("is_publish", MProConfig.getInstance().getIs_publish())
                 .params("t", System.currentTimeMillis())
-                .execute(new MCallBack<Result<List<MVersionBean.VersionInfoBean>>>(this, false) {
+                .execute(new MCallBack<Result<MVersionBean>>(this, false) {
                     @Override
-                    public void onSuccess(Response<Result<List<MVersionBean.VersionInfoBean>>> response) {
+                    public void onSuccess(Response<Result<MVersionBean>> response) {
                         if (response.body().isSuccess()) {
-                            if (response.body().data != null && response.body().data.size() != 0) {
-                                infoBean = response.body().data.get(0);
-                                appInfoBean = ParseJsonUtil.getBean(infoBean.getApp_info(), AppInfoBean.class);
-                            }
+                            mVersionBean = response.body().data;
                             checkRes();
                         } else {
                             if (resourceNameView() != null)
                                 resourceNameView().setText("版本信息获取失败");
 
-                            finish();
-                        }
-                    }
-                });
-    }
-
-    @Override
-    protected void checkRes() {
-
-        if (infoBean == null) {
-            MToast.showToast(this, "未检测到可用版本");
-            finish();
-            return;
-        }
-
-        if (!TextUtils.isEmpty(infoBean.getBase_skin())) {
-            String[] area = infoBean.getBase_skin().split("/");
-            String fileName = area[area.length - 1];
-            mDownloads.add(infoBean.getBase_skin());
-            downKeys.add(fileName);
-            if (Integer.parseInt(infoBean.getInterpreter_code()) < 4)
-                MProConfig.skin_name = fileName;
-        }
-
-        if (!TextUtils.isEmpty(infoBean.getCustom_skin())) {
-            String[] area = infoBean.getCustom_skin().split("/");
-            String fileName = area[area.length - 1];
-            mDownloads.add(infoBean.getCustom_skin());
-            downKeys.add(fileName);
-            if (Integer.parseInt(infoBean.getInterpreter_code()) >= 4)
-                MProConfig.skin_name = fileName;
-        }
-
-        MProConfig.build()
-                .setKrtCode(krtCode)
-                .setFragmentClz(BaseFragment.class)
-                .setIsPublish(infoBean.getIs_publish())
-                .generate();
-        MProConfig.btx_json_name = appInfoBean.getStartPageId();
-
-        if (appInfoBean != null) {
-            AppLibManager.defaultPath = appInfoBean.getDefaultPath();
-            for (AppInfoBean.BasePathBean basePathBean : appInfoBean.getBasePath()) {
-                AppLibManager.putBasePath(basePathBean.getProd());
-                AppLibManager.putBetaPath(basePathBean.getDev());
-            }
-        }
-
-        if (resourceNameView() != null)
-            resourceNameView().setText("界面清单获取中...");
-
-        OkGo.<Result<List<MPageInfoBean>>>get(Constants.getUrl("getPageList"))
-                .params("withConfig", 1)
-                .params("pageSize", 100)
-                .params("tag", krtCode)
-                .params("currentPage", 0)
-                .params("version", krtVer)
-                .params("t", System.currentTimeMillis())
-                .execute(new MCallBack<Result<List<MPageInfoBean>>>(this, false) {
-                    @Override
-                    public void onSuccess(Response<Result<List<MPageInfoBean>>> response) {
-                        if (response.body().isSuccess()) {
-                            List<MPageInfoBean> list = response.body().data;
-                            for (MPageInfoBean bean : list) {
-                                md5CodeMap.put(bean.getPage_config_md5(), bean);
-                            }
-                            loadResList();
-                        } else {
-                            if (resourceNameView() != null)
-                                resourceNameView().setText("界面清单获取失败");
-
                             gotoMainActivity();
                         }
                     }
 
                     @Override
-                    public void onError(Response<Result<List<MPageInfoBean>>> response) {
+                    public void onError(Response<Result<MVersionBean>> response) {
                         super.onError(response);
-                        gotoMainActivity();
                     }
                 });
 
-    }
-
-
-    @Override
-    protected void loadResList() {
-        if (resourceNameView() != null)
-            resourceNameView().setText("正在检查资源列表...");
-
-        OkGo.<Result<List<MResourceBean>>>get(Constants.getUrl("getProjectRes"))
-                .params("tag", krtCode)
-                .execute(new MCallBack<Result<List<MResourceBean>>>(this, false) {
-                    @Override
-                    public void onSuccess(Response<Result<List<MResourceBean>>> response) {
-                        if (response.body().isSuccess()) {
-                            List<MResourceBean> list = response.body().data;
-                            if (list != null) {
-                                for (MResourceBean res : list) {
-                                    resMap.put(res.getFile_name(), res);
-                                }
-                            }
-                            filterResLoad();
-                        } else {
-                            gotoMainActivity();
-                        }
-                    }
-                });
     }
 }

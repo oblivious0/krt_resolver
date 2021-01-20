@@ -25,7 +25,9 @@ import com.wid.applib.R;
 import com.wid.applib.base.BaseModuleFragment;
 import com.wid.applib.base.Constants;
 import com.wid.applib.bean.BottomBean;
+import com.wid.applib.bean.SkinIconBean;
 import com.wid.applib.config.MProConfig;
+import com.wid.applib.skin.SkinManager;
 import com.wid.applib.util.CropUtil;
 import com.wid.applib.util.Util;
 
@@ -121,11 +123,10 @@ public class BottomLayout extends LinearLayout {
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-
-        CropUtil.getInstance().cropBottomImg(context, list, new File(Constants.path + skinName), () -> initIndicator());
         addViewPager();
         addIndicator();
 
+        initIndicator();
     }
 
     /**
@@ -230,7 +231,11 @@ public class BottomLayout extends LinearLayout {
                 @Override
                 public void onSelected(int index, int totalCount) {
                     if (list.get(index).isSkinIcon()) {
-                        CropUtil.getInstance().cropImg(context, skinName, list.get(index).getSelectSkin(), bitmap -> titleImg.setImageBitmap(bitmap));
+                        if (SkinManager.isLoadSkin()) {
+                            SkinIconBean ico = SkinManager.getInstance().getSkinByCode(list.get(index).getSelectSkin());
+                            CropUtil.getInstance().cropImg(context, MProConfig.skin_name,
+                                    ico.getFileName(), bitmap -> titleImg.setImageBitmap(bitmap));
+                        }
                     } else {
                         MGlideUtil.load(context, list.get(index).getSelectImgUrl(), titleImg);
                     }
@@ -240,7 +245,11 @@ public class BottomLayout extends LinearLayout {
                 @Override
                 public void onDeselected(int index, int totalCount) {
                     if (list.get(index).isSkinIcon()) {
-                        CropUtil.getInstance().cropImg(context, skinName, list.get(index).getOriginSkin(), bitmap -> titleImg.setImageBitmap(bitmap));
+                        if (SkinManager.isLoadSkin()) {
+                            SkinIconBean ico = SkinManager.getInstance().getSkinByCode(list.get(index).getOriginSkin());
+                            CropUtil.getInstance().cropImg(context, MProConfig.skin_name,
+                                    ico.getFileName(), bitmap -> titleImg.setImageBitmap(bitmap));
+                        }
                     } else {
                         MGlideUtil.load(context, list.get(index).getImgUrl(), titleImg);
                     }

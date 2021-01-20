@@ -11,9 +11,11 @@ import com.joooonho.SelectableRoundedImageView;
 import com.wid.applib.animate.FlubberAnimate;
 import com.wid.applib.base.Constants;
 import com.wid.applib.bean.BaseLayoutBean;
+import com.wid.applib.bean.SkinIconBean;
 import com.wid.applib.config.MProConfig;
 import com.wid.applib.imp.ContextImp;
 import com.wid.applib.manager.DownManager;
+import com.wid.applib.skin.SkinManager;
 import com.wid.applib.util.CropUtil;
 import com.wid.applib.util.FrameParamsBuilder;
 import com.wid.applib.util.Util;
@@ -80,14 +82,16 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                         //如果不存在需先下载
                         DownManager.downResOnBack(bean.getStyle().getIconFileName(),
                                 picName, filePath -> {
-                                    LogUtils.e(filePath);
                                     CropUtil.getInstance().cropImg(contextImp.getContext(), filePath,
                                             bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
                                 });
                     }
                 } else {
-                    CropUtil.getInstance().cropImg(contextImp.getContext(), MProConfig.skin_name,
-                            bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));
+                    if (SkinManager.isLoadSkin()) {
+                        SkinIconBean ico = SkinManager.getInstance().getSkinByCode(bean.getStyle().getIconFileParam());
+                        CropUtil.getInstance().cropImg(contextImp.getContext(), MProConfig.skin_name,
+                                ico.getFileName(), bitmap -> view.setImageBitmap(bitmap));
+                    }
                 }
             }
         } else {
