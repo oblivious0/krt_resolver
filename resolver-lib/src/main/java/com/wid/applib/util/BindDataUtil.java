@@ -91,4 +91,38 @@ public class BindDataUtil {
 
         return views;
     }
+
+    /**
+     * 瀑布流绑定样式数据
+     * @param bean
+     * @param imp
+     * @param frameLayout
+     * @param item
+     * @return
+     */
+    @SuppressLint("CheckResult")
+    public static List<BaseView> bindListDataPosition(BaseLayoutBean bean, ContextImp imp, FrameLayout frameLayout, Object item,int position) {
+        List<BindDataBean> bindDatas = new ArrayList<>();
+        List<BaseView> views = new ArrayList<>();
+        frameLayout.removeAllViews();
+        ModuleViewFactory.createViews(bean.getChildren().get(position).getChildren(), imp, frameLayout, views, true);
+
+        if (bean.getAjax() != null && bean.getAjax().size() != 0) {
+            bindDatas.addAll(bean.getAjax().get(0).getBindData());
+        } else if (bean.getStaticData() != null && bean.getStaticData().getBindData() != null) {
+            bindDatas.addAll(bean.getStaticData().getBindData());
+        }
+
+        if (bindDatas.size() == 0) return views;
+
+        for (BaseView baseV : views) {
+            for (int j = 0; j < bindDatas.size(); j++) {
+                BindDataUtil util = new BindDataUtil(bindDatas.get(j).getOriginKey());
+                String val = PropertyBindTool.getProperty(bindDatas.get(j).getBindKeys(), item);
+                baseV.bindData(util.getCid(), util.getViewProperty(), val);
+            }
+        }
+
+        return views;
+    }
 }

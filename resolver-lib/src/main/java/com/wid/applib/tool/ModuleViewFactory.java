@@ -26,6 +26,7 @@ import com.wid.applib.widget.combination.NavbarView;
 import com.wid.applib.widget.base.PicView;
 import com.wid.applib.widget.layout.TabTitleView;
 import com.wid.applib.widget.list.OptionListView;
+import com.wid.applib.widget.list.WaterFallListView;
 
 import java.util.Collections;
 import java.util.List;
@@ -96,6 +97,9 @@ public class ModuleViewFactory {
                     break;
                 case ViewValue.WEATHER:
                     baseView = new WeatherView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.WATERFALL:
+                    baseView = new WaterFallListView(contextImp, bean, isChild);
                     break;
                 default:
                     if (contextImp.getConvertTool() != null) {
