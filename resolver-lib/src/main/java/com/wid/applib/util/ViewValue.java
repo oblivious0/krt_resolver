@@ -25,4 +25,9 @@ public class ViewValue {
     public static final String SCROLLLABEL = "scrollLabel";
     public static final String WEATHER = "weather";
 
+    /**
+     * 瀑布流组件
+     */
+    public static final String WATERFALL = "waterfall";
+
 }
