@@ -34,12 +34,12 @@ public class DownManager {
             mDownCallbacks.add(callback);
             sequence.put(downPath, mDownCallbacks);
             OkGo.<File>get(downPath)
-                    .execute(new FileCallback(Constants.basePath, fileName) {
+                    .execute(new FileCallback(Constants.path, fileName) {
                         @Override
                         public void onSuccess(Response<File> response) {
                             if (response.isSuccessful()) {
                                 for (MDownCallback cb : sequence.get(downPath)) {
-                                    cb.callback(Constants.basePath + "/" + fileName);
+                                    cb.callback(Constants.path + "/" + fileName);
                                 }
                             }
                             sequence.remove(downPath);

@@ -28,8 +28,8 @@ public class MProConfig {
         return new Builder();
     }
 
-    private Class<? extends BaseModuleFragment> fragmentClz ;
-    public static String skin_name;
+    private Class<? extends BaseModuleFragment> fragmentClz;
+    public static String skin_name = "customSkin.png";
     public static String btx_json_name;
     private String krt_pro_code;
     private String is_publish = "-1";
@@ -46,9 +46,9 @@ public class MProConfig {
         }
 
         public Builder setIsPublish(String val) {
-            if (val==null){
+            if (val == null) {
                 isPublish = "-1";
-            }else {
+            } else {
                 isPublish = val;
             }
             return this;

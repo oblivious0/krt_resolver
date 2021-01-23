@@ -101,7 +101,7 @@ public class WeatherView extends BaseView<FrameLayout> {
 
     public void showWeather(String code) {
         if (TextUtils.isEmpty(code)) {
-            OkGo.get("https://restapi.amap.com/v3/geocode/regeo?key=2be33124f87ba1f30d7d7a9ea462ed56&location=" + lng + "," + lat)
+            OkGo.get("https://restapi.amap.com/v3/geocode/regeo?key=4f360dc401a0b7245ade3616af366949&location=" + lng + "," + lat)
 //                    .params("key", "2be33124f87ba1f30d7d7a9ea462ed56")
 //                    .params("location", lat + "," + lng)
                     .execute(new MCallBack<Object>((Activity) contextImp.getContext()) {
@@ -124,7 +124,7 @@ public class WeatherView extends BaseView<FrameLayout> {
         } else {
             OkGo.get("https://restapi.amap.com/v3/weather/weatherInfo")
                     .params("city", code)
-                    .params("key", "2be33124f87ba1f30d7d7a9ea462ed56")
+                    .params("key", "4f360dc401a0b7245ade3616af366949")
                     .execute(new MCallBack<Object>((Activity) contextImp.getContext()) {
                         @Override
                         public void onSuccess(Response<Object> response) {

@@ -74,7 +74,7 @@ public class PicView extends BaseView<SelectableRoundedImageView> {
                     String[] urls = bean.getStyle().getIconFileName().split("/");
 
                     String picName = urls[urls.length - 1];
-                    File file = new File(Constants.basePath + "/" + picName);
+                    File file = new File(Constants.path + "/" + picName);
                     if (file.exists()) {
                         CropUtil.getInstance().cropImg(contextImp.getContext(), picName,
                                 bean.getStyle().getIconFileParam(), bitmap -> view.setImageBitmap(bitmap));

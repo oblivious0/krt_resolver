@@ -230,7 +230,7 @@ public class Util {
 
     public static void getAssestsImage(Context context, String name) {
 
-        File nomedia = new File(Constants.basePath, ".nomedia");
+        File nomedia = new File(Constants.path, ".nomedia");
         try {
             if (!nomedia.exists()) nomedia.createNewFile();
         } catch (IOException e) {

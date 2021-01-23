@@ -20,9 +20,10 @@ public class Constants {
     }
 
     public static final String imgPath = Environment.getExternalStorageDirectory().getPath() + File.separator
-            + AppUtils.getAppName() + File.separator + "image" + File.separator;
+            + AppUtils.getAppName() + File.separator + "module/image/" + File.separator;
 
-    public static final String path = Environment.getExternalStorageDirectory().getPath() + File.separator + AppUtils.getAppName() + File.separator;
+    public static final String path = Environment.getExternalStorageDirectory().getPath() + File.separator
+            + AppUtils.getAppName() + File.separator + "module/";
 
-    public static final String basePath = Environment.getExternalStorageDirectory().getPath() + File.separator + AppUtils.getAppName() ;
+    public static final String basePath = Environment.getExternalStorageDirectory().getPath() + File.separator + AppUtils.getAppName();
 }
