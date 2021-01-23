@@ -30,4 +30,9 @@ public class ViewValue {
      */
     public static final String WATERFALL = "waterfall";
 
+    /**
+     * 视频组件
+     */
+    public static final String VIDEO = "video";
+
 }
