@@ -76,6 +76,15 @@ public class CommonBean {
     private String weatherTextId;
     private String temperatureId;
     private String iconId;
+    private String poster;
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
+    }
 
     public String getCityNameId() {
         return cityNameId;

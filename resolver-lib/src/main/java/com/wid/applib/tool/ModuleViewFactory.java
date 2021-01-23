@@ -11,6 +11,7 @@ import com.wid.applib.util.JsonValue;
 import com.wid.applib.util.ViewValue;
 import com.wid.applib.widget.base.InputView;
 import com.wid.applib.widget.base.ScorllLabelView;
+import com.wid.applib.widget.base.VideoView;
 import com.wid.applib.widget.combination.WeatherView;
 import com.wid.applib.widget.list.BannerView;
 import com.wid.applib.widget.BaseView;
@@ -100,6 +101,9 @@ public class ModuleViewFactory {
                     break;
                 case ViewValue.WATERFALL:
                     baseView = new WaterFallListView(contextImp, bean, isChild);
+                    break;
+                case ViewValue.VIDEO:
+                    baseView = new VideoView(contextImp, bean, isChild);
                     break;
                 default:
                     if (contextImp.getConvertTool() != null) {

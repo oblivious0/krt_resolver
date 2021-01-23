@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -74,7 +75,7 @@ public class WaterFallListView extends BaseView<MRecyclerView> {
                         ((Activity) contextImp.getContext()).getWindowManager().getDefaultDisplay().getHeight() - 60
                         : bean.getCommon().getHeight())
                 .setMarginLeft(bean.getCommon().getX())
-                .setMarginTop(contextImp.getPageType().equals("list") ? 0 : bean.getCommon().getY())
+                .setMarginTop(bean.getCommon().getY())
                 .build();
         view.setLayoutParams(lp);
         view.setClipChildren(false);
@@ -185,7 +186,7 @@ public class WaterFallListView extends BaseView<MRecyclerView> {
     private class ListAdapter extends BaseQuickAdapter<Object, BaseViewHolder> {
 
          public ListAdapter() {
-             super(R.layout.item_frame, list);
+             super(R.layout.layout_waterfull, list);
         }
 
         @Override
@@ -196,21 +197,35 @@ public class WaterFallListView extends BaseView<MRecyclerView> {
         @Override
         protected void convert(BaseViewHolder helper, Object item) {
 
-            FrameLayout frameLayout = (FrameLayout) helper.itemView;
+
+            CardView cardView = (CardView) helper.itemView;
+            FrameLayout frameLayout = (FrameLayout) helper.getView(R.id.frame);
+            if (bean.getChildren().get(helper.getItemViewType()).getCommon() != null && Util.getRealColor(bean.getChildren().get(helper.getItemViewType()).getCommon().getShadowColor()) != 0
+                    && Util.getRealColor(bean.getChildren().get(helper.getItemViewType()).getCommon().getShadowColor()) != -1) {
+
+                int color = Util.getRealColor(bean.getChildren().get(helper.getItemViewType()).getStyle().getBgColor());
+                if (color == 0) color = -1;cardView.setCardBackgroundColor(color);
+                cardView.setRadius(bean.getChildren().get(helper.getItemViewType()).getCommon().getRadius());
+                cardView.setCardElevation(10);
+            } else {
+                GradientDrawable drawable = Util.getBgDrawable(Util.getRealColor(bean.getChildren().get(helper.getItemViewType()).getStyle().getBgColor()) + "",
+                        GradientDrawable.RECTANGLE,
+                        bean.getStyle().getBorderRadius() == 0 ? bean.getChildren().get(helper.getItemViewType()).getCommon().getRadius() : bean.getChildren().get(helper.getItemViewType()).getStyle().getBorderRadius(),
+                        bean.getStyle().getBorderWidth() == 0 ? 1 : bean.getChildren().get(helper.getItemViewType()).getStyle().getBorderWidth(),
+                        bean.getStyle().getBorderColor());
+                frameLayout.setBackgroundDrawable(drawable);
+            }
+
             FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
-                    .setWidth(bean.getCommon().getItemW())
-                    .setHeight(bean.getCommon().getItemH())
-                    .setMarginRight(bean.getCommon().getxPadding())
+                    .setWidth(bean.getChildren().get(helper.getItemViewType()).getCommon().getWidth())
+                    .setHeight(bean.getChildren().get(helper.getItemViewType()).getCommon().getHeight())
+                    .setMarginLeft(bean.getCommon().getxPadding())
                     .setMarginBottom(bean.getCommon().getyPadding())
                     .build();
-
-            frameLayout.setLayoutParams(lp);
-            GradientDrawable drawable = Util.getBgDrawable(bean.getStyle().getBgColor(),
-                    GradientDrawable.RECTANGLE, bean.getStyle().getBorderRadius(), bean.getStyle().getBorderWidth(),
-                    bean.getStyle().getBorderColor());
-            frameLayout.setBackgroundDrawable(drawable);
+            cardView.setLayoutParams(lp);
             BindDataUtil.bindListDataPosition(bean, contextImp, frameLayout, item,helper.getItemViewType());
 
         }
+
     }
 }
