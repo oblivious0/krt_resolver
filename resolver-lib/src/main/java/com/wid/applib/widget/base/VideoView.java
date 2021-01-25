@@ -21,6 +21,7 @@ import com.wid.applib.view.MRecyclerView;
 import com.wid.applib.widget.BaseView;
 
 import krt.wid.util.MGlideUtil;
+import krt.wid.util.MToast;
 
 /**
  * @author xzy
@@ -30,7 +31,7 @@ import krt.wid.util.MGlideUtil;
  */
 public class VideoView extends BaseView<FrameLayout> {
 
-    private ImageView thump,playImg;
+    private ImageView thump, playImg;
 
     /**
      * 视频地址
@@ -42,8 +43,8 @@ public class VideoView extends BaseView<FrameLayout> {
         super(imp, obj);
     }
 
-    public VideoView(ContextImp imp, BaseLayoutBean obj,boolean isListChild) {
-        super(imp, obj,isListChild);
+    public VideoView(ContextImp imp, BaseLayoutBean obj, boolean isListChild) {
+        super(imp, obj, isListChild);
     }
 
     @Override
@@ -60,16 +61,16 @@ public class VideoView extends BaseView<FrameLayout> {
         initVideo();
     }
 
-    private void initVideo(){
+    private void initVideo() {
         thump = new ImageView(contextImp.getContext());
         FrameLayout.LayoutParams lp = FrameParamsBuilder.builder()
                 .setWidth(bean.getCommon().getWidth())
                 .setHeight(bean.getCommon().getHeight())
                 .build();
         thump.setLayoutParams(lp);
-        MGlideUtil.load(contextImp.getContext(),bean.getCommon().getPoster(), thump);
+        MGlideUtil.load(contextImp.getContext(), bean.getCommon().getPoster(), thump);
         playImg = new ImageView(contextImp.getContext());
-        if(!bean.getCommon().getSrc().isEmpty()){
+        if (!bean.getCommon().getSrc().isEmpty()) {
             videoUrl = bean.getCommon().getSrc();
         }
         MGlideUtil.load(contextImp.getContext(), R.mipmap.play, playImg);
@@ -85,10 +86,10 @@ public class VideoView extends BaseView<FrameLayout> {
         playImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                    if (TbsVideo.canUseTbsPlayer(contextImp.getContext()) && !TextUtils.isEmpty(videoUrl)) {
-                        TbsVideo.openVideo(contextImp.getContext(),videoUrl);
-                    }
+                MToast.showToast(contextImp.getContext(), videoUrl);
+                if (TbsVideo.canUseTbsPlayer(contextImp.getContext()) && !TextUtils.isEmpty(videoUrl)) {
+                    TbsVideo.openVideo(contextImp.getContext(), videoUrl);
+                }
 
             }
         });
@@ -106,17 +107,22 @@ public class VideoView extends BaseView<FrameLayout> {
     }
 
     @Override
+    public void bindEvent() {
+//        super.bindEvent();
+    }
+
+    @Override
     public void bindData(String cid, String key, String val) {
         try {
             if (cid.equals(this.cid)) {
                 switch (key) {
                     case "src":
-                        if(!TextUtils.isEmpty(val)){
+                        if (!TextUtils.isEmpty(val)) {
                             videoUrl = val;
                         }
                         break;
                     case "poster":
-                        if(!TextUtils.isEmpty(val)) {
+                        if (!TextUtils.isEmpty(val)) {
                             MGlideUtil.load(contextImp.getContext(), bean.getCommon().getPoster(), thump);
                         }
                         break;
