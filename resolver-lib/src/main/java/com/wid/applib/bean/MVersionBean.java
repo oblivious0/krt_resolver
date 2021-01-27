@@ -57,6 +57,8 @@ public class MVersionBean {
         private String base_skin;   //主题皮肤文件
         private String custom_skin; //其他皮肤文件
         private String skin_version;
+        private String url;
+        private String cdn_url;
 
         //skin_code（皮肤标识）、skin_icon
         private String skin_code;
@@ -83,6 +85,22 @@ public class MVersionBean {
          *      "defaultPath":0
          * }
          */
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getCdn_url() {
+            return cdn_url;
+        }
+
+        public void setCdn_url(String cdn_url) {
+            this.cdn_url = cdn_url;
+        }
 
         public String getSkin_base64() {
             return skin_base64;

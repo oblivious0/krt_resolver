@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.Oblivious0'
+group = 'com.github.Oblivious0'
 
 android {
     compileSdkVersion 29
@@ -26,6 +26,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    def sdkName = "krt_resolver_lib"
+    def sdkVersion = "_4_1"
+
+    task makeJar(type: Copy) {
+        delete "build/libs/" + sdkName + sdkVersion + ".jar"
+        from('build/intermediates/aar_main_jar/release/')
+        into('build/libs/')
+        include('classes.jar')
+        rename ('classes.jar', sdkName + sdkVersion + ".jar")
+    }
+
+    makeJar.dependsOn(build)
 
 }
 

@@ -125,7 +125,7 @@ public class MLoader {
         activity.appInfoBean = ParseJsonUtil.getBean
                 (versionInfoBean.getApp_info(), AppInfoBean.class);
 
-        String url = versionInfoBean.getCustom_skin();
+        String url = null;
         builder.setSkinCode(versionInfoBean.getSkin_code())
                 .setSkinList(versionInfoBean.getSkin_icon())
                 .generate();
@@ -144,38 +144,23 @@ public class MLoader {
         switch (versionInfoBean.getIs_publish()) {
             case "-1":
             case "0":
-                String base64 = versionInfoBean.getSkin_base64();
-                if (base64.contains("data:image/png;base64,")) {
-                    String png = base64.replace("data:image/png;base64,", "");
-                    byte[] img = EncodeUtils.base64Decode(png);
-                    File f = new File(Constants.path + "/customSkin.png");
-                    FileUtils.createFileByDeleteOldFile(f);
-                    FileOutputStream fOut = null;
-                    try {
-                        fOut = new FileOutputStream(f);
-                        ConvertUtils.bytes2Bitmap(img).compress(Bitmap.CompressFormat.PNG, 100, fOut);
-                        fOut.flush();
-                        fOut.close();
-                    } catch (Exception e) {
-
-                    } finally {
-                        fOut = null;
-                    }
-                }
+                url = versionInfoBean.getCdn_url();
                 break;
             default:
-                String[] area = url.split("/");
-                String fileName = area[area.length - 1];
-                String current = AppLibManager.getStorageVal("skinVer", activity.getApplicationContext());
-                //如果皮肤版本号不匹配或者皮肤文件不存在，需要重新下载
-                if (!versionInfoBean.getSkin_version().equals(current) || FileUtils.isDir(Constants.path + "/" + MProConfig.skin_name)) {
-                    mDownloads.add(url);
-                    downKeys.add(fileName);
-                    AppLibManager.putStorageVal("skinVer", versionInfoBean.getSkin_version(), activity.getApplicationContext());
-                    //每次更新了皮肤文件，删除所有切图
-                    FileUtils.deleteFilesInDir(Constants.path);
-                }
+                url = versionInfoBean.getUrl();
                 break;
+        }
+
+        if (TextUtils.isEmpty(url)) url = versionInfoBean.getCustom_skin();
+
+        String current = AppLibManager.getStorageVal("skinVer", activity.getApplicationContext());
+        //如果皮肤版本号不匹配或者皮肤文件不存在，需要重新下载
+        if (!versionInfoBean.getSkin_version().equals(current) || FileUtils.isDir(Constants.path + "/" + MProConfig.skin_name)) {
+            mDownloads.add(url);
+            downKeys.add("customSkin.png");
+            AppLibManager.putStorageVal("skinVer", versionInfoBean.getSkin_version(), activity.getApplicationContext());
+            //每次更新了皮肤文件，删除所有切图
+            FileUtils.deleteFilesInDir(Constants.path);
         }
 
         if (isComplete) {
